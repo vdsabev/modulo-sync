@@ -1,4 +1,6 @@
+// TODO: Write tests
 // TODO: Refactor in FP
+// TODO: Improve CLI options and allow installing globally
 // TODO: Store upload tasks and cancel them if a new one starts at the same path before the previous one has finished
 // TODO: Add option for full initial upload
 // TODO: Add option for full initial download
@@ -33,5 +35,6 @@ const deleteFile = (localPath: string) => {
 
 const remotePath = (localPath: string) => localPath.replace(/\\/g, '/');
 
-const watcher = watch('./posts/**/*', { persistent: true });
+const localFolder = process.argv[2];
+const watcher = watch(`./${localFolder}/**/*`, { persistent: true });
 watcher.on('ready', startWatchingFiles);
