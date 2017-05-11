@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "modulo-sync",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./build/index.js"
+  },
+  "dependencies": {
+    "firebase": "3.9.0"
+  }
+}
