@@ -1,5 +1,7 @@
 build
 node_modules
-public
+posts
+
 .env
+key.json
 *.log
