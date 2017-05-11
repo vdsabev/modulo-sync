@@ -3,5 +3,6 @@ node_modules
 posts
 
 .env
-key.json
+database.json
+storage.json
 *.log
