@@ -1,11 +1,11 @@
 {
   "private": true,
   "name": "modulo-sync",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node ./build/index.js",
+    "start": "npm run build && node -r dotenv/config ./build/index.js",
     "test": "jest",
     "jest": "jest --watch"
   },

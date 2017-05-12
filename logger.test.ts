@@ -17,17 +17,17 @@ describe(`error`, () => {
 describe(`maybeError`, () => {
   it(`should log error if truth`, () => {
     const originalError = logger.error;
-    logger.error = jest.fn();
+    (<any>logger).error = jest.fn();
     logger.maybeError(true);
     expect(logger.error).toHaveBeenCalledWith(true);
-    logger.error = originalError;
+    (<any>logger).error = originalError;
   });
 
   it(`should not log error if false`, () => {
     const originalError = logger.error;
-    logger.error = jest.fn();
+    (<any>logger).error = jest.fn();
     logger.maybeError(false);
     expect(logger.error).not.toHaveBeenCalledWith(false);
-    logger.error = originalError;
+    (<any>logger).error = originalError;
   });
 });
