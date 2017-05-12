@@ -7,7 +7,7 @@
 // TODO: Add option for full initial download
 // TODO: Extract firebase database & google cloud storage in separate files
 // TODO: Allow using like this:
-// `npm start local://./posts/:postId/content.md,database://postContent/${postId} local://./posts/:postId/!(content.md),storage://posts/${postId}`
+// `npm start local://./posts/:postId/content.md,firebase://postContent/${postId} local://./posts/:postId/!(content.md),gcs://posts/${postId}`
 
 import * as dotenv from 'dotenv';
 dotenv.config();
