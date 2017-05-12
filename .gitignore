@@ -1,8 +1,8 @@
 build
+coverage
 node_modules
 posts
+private
 
 .env
-database.json
-storage.json
 *.log
