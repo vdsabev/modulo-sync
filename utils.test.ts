@@ -1,6 +1,6 @@
 import 'jest';
 
-import { assertNever, left, right, flowToRight, flowToLeft } from './utils';
+import { assertNever, left, right, flowRight, flowLeft, invoke } from './utils';
 
 describe(`assertNever`, () => {
   it(`should throw an error when called`, () => {
@@ -47,22 +47,40 @@ describe(`right`, () => {
   });
 });
 
-describe(`flowToRight`, () => {
+describe(`flowRight`, () => {
   const add1 = (value: number) => value + 1;
   const multiplyBy2 = (value: number) => value * 2;
 
   it(`should call left function, then right function`, () => {
-    const result = flowToRight(add1, multiplyBy2)(0);
-    expect(result).toEqual(2);
+    const result = flowRight(add1, multiplyBy2)(0);
+    expect(result).toBe(2);
   });
 });
 
-describe(`flowToLeft`, () => {
+describe(`flowLeft`, () => {
   const add1 = (value: number) => value + 1;
   const multiplyBy2 = (value: number) => value * 2;
 
   it(`should call right function, then left function`, () => {
-    const result = flowToLeft(add1, multiplyBy2)(0);
-    expect(result).toEqual(1);
+    const result = flowLeft(add1, multiplyBy2)(0);
+    expect(result).toBe(1);
+  });
+});
+
+describe(`invoke`, () => {
+  it(`should return a function`, () => {
+    expect(typeof invoke('a')).toBe('function');
+  });
+
+  it(`should invoke the function by name when called`, () => {
+    const pop = invoke('pop');
+    const array = [1, 2, 3];
+    expect(pop(array)).toBe(3);
+  });
+
+  it(`should invoke the function with multiple arguments`, () => {
+    const getWithoutFirstAndLast = invoke('slice', 1, -1);
+    const array = [1, 2, 3, 4, 5];
+    expect(getWithoutFirstAndLast(array)).toEqual([2, 3, 4]);
   });
 });

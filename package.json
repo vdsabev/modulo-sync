@@ -12,12 +12,12 @@
   "dependencies": {
     "@google-cloud/storage": "1.1.0",
     "@types/chokidar": "1.6.0",
-    "@types/dotenv": "4.0.0",
+    "@types/glob": "5.0.30",
     "@types/jest": "19.2.3",
-    "@types/node": "7.0.18",
     "chokidar": "1.7.0",
     "dotenv": "4.0.0",
     "firebase-admin": "4.2.1",
+    "glob": "7.1.1",
     "jest": "20.0.1",
     "ts-jest": "20.0.3",
     "typescript": "2.3.2"
@@ -28,7 +28,7 @@
       "**/*.{ts,tsx,js}",
       "!**/*.test.{ts,tsx,js}",
       "!**/*.d.ts",
-      "!node_modules/**"
+      "!(build|coverage|node_modules|posts|private)/**"
     ],
     "moduleFileExtensions": [
       "ts",
