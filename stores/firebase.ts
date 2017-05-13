@@ -13,34 +13,36 @@ const firebase = firebaseAdmin.initializeApp({
   databaseURL: process.env.FIREBASE_DATABASE_URL
 });
 
-const remotePath = 'postContent';
-const files = `./posts/*/content.md`;
 const database = firebase.database();
 
-export const sync = sequence(partial(logger.log, '[STORE] Firebase'), () => {
-  const watcher = watch(files, { persistent: true });
-  watcher.on('ready', startWatchingFiles(watcher));
-});
+export const sync = (source: string, destination: string) => {
+  logger.log(`[FIREBASE] ${source} -> ${destination}`);
 
-export const startWatchingFiles = (watcher: FSWatcher) => () => {
+  const watcher = watch(source, { persistent: true });
+  watcher.on('ready', startWatchingFiles(watcher, destination));
+};
+
+export const startWatchingFiles = (watcher: FSWatcher, destination: string) => () => {
   watcher
-    .on('add', sequence(partial(logger.log, '[CREATE]'), uploadFile))
-    .on('change', sequence(partial(logger.log, '[UPDATE]'), uploadFile))
-    .on('unlink', sequence(partial(logger.log, '[DELETE]'), deleteFile))
+    // TODO: Use `partial(logger.log, '[CREATE]', _)`
+    // TODO: Use `partial(uploadFile, _, destination)`
+    .on('add', sequence(partial(logger.log, '[CREATE]'), (source: string) => uploadFile(source, destination)))
+    // TODO: Use `partial(logger.log, '[UPDATE]', _)`
+    .on('change', sequence(partial(logger.log, '[UPDATE]'), (source: string) => uploadFile(source, destination)))
+    // TODO: Use `partial(logger.log, '[DELETE]', _)`
+    // TODO: Use `partial(deleteFile, _, destination)`
+    .on('unlink', sequence(partial(logger.log, '[DELETE]'), (source: string) => deleteFile(source, destination)))
     .on('error', partial(logger.error, '[ERROR]'));
 };
 
-export const uploadFile = async (localPath: string) => {
+export const uploadFile = async (source: string, destination: string) => {
   const readFile = promisify(fs.readFile);
-  const file = await readFile(localPath, 'utf8').catch(logger.error);
-  await database.ref(getRemotePath(localPath)).set(file).catch(logger.error);
+  const file = await readFile(source, 'utf8').catch(logger.error);
+  await database.ref(getDestination(source, destination)).set(file).catch(logger.error);
 };
 
-export const deleteFile = async (localPath: string) => {
-  await database.ref(getRemotePath(localPath)).remove().catch(logger.error);
+export const deleteFile = async (source: string, destination: string) => {
+  await database.ref(getDestination(source, destination)).remove().catch(logger.error);
 };
 
-export const getRemotePath = (localPath: string): string => {
-  const key = localPath.split(path.sep)[1];
-  return `${remotePath}/${key}`;
-};
+export const getDestination = (source: string, destination: string): string => [destination, source.split(path.sep)[1]].join('/');

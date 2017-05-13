@@ -11,5 +11,8 @@
 import * as glob from 'glob';
 import { pipe, invoke } from './utils';
 
-export const requireAndSync = pipe(require, invoke('sync'));
+const localPath = './posts/*/content.md';
+const remotePath = 'postContent';
+
+export const requireAndSync = pipe(require, invoke('sync', localPath, remotePath));
 glob.sync('./stores/!(*.test).js', { cwd: __dirname }).map(requireAndSync);

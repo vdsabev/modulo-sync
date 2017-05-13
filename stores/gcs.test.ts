@@ -10,7 +10,7 @@ import { sync } from './gcs';
 
 describe(`sync`, () => {
   it(`should log action`, () => {
-    sync();
-    expect(logger.log).toHaveBeenLastCalledWith('[STORE] GCS');
+    sync('a', 'b');
+    expect(logger.log).toHaveBeenLastCalledWith('[GCS] a -> b');
   });
 });

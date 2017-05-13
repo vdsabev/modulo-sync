@@ -1,7 +1,7 @@
 import { logger } from '../logger';
 
-export const sync = () => {
-  logger.log('[STORE] GCS');
+export const sync = (source: string, destination: string) => {
+  logger.log(`[GCS] ${source} -> ${destination}`);
   // TODO
 };
 

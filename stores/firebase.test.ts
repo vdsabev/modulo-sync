@@ -31,21 +31,21 @@ import { logger } from '../logger';
 
 jest.mock(path.resolve('private/firebase.json'), () => '', { virtual: true });
 
-import { sync, startWatchingFiles, uploadFile, deleteFile, getRemotePath } from './firebase';
+import { sync, startWatchingFiles, uploadFile, deleteFile, getDestination } from './firebase';
 
 describe(`sync`, () => {
   it(`should log action`, () => {
-    sync();
-    expect(logger.log).toHaveBeenLastCalledWith('[STORE] Firebase');
+    sync('a', 'b');
+    expect(logger.log).toHaveBeenLastCalledWith('[FIREBASE] a -> b');
   });
 
   it(`should call watch with the correct parameters`, () => {
-    sync();
-    expect(watch).toHaveBeenLastCalledWith(`./posts/*/content.md`, { persistent: true });
+    sync('a', 'b');
+    expect(watch).toHaveBeenLastCalledWith('a', { persistent: true });
   });
 
   it(`should start watching files when ready`, () => {
-    sync();
+    sync('a', 'b');
     expect(last<any>(watcher.on.mock.calls)[0]).toBe('ready');
     expect(typeof last<any>(watcher.on.mock.calls)[1]).toBe('function');
   });
@@ -54,7 +54,7 @@ describe(`sync`, () => {
 describe(`startWatchingFiles`, () => {
   it(`should call corresponding methods on file events`, () => {
     const mockWatcher: any = { on: jest.fn(() => mockWatcher) };
-    startWatchingFiles(mockWatcher)();
+    startWatchingFiles(mockWatcher, 'b')();
     expect(mockWatcher.on.mock.calls[0][0]).toBe('add');
     expect(mockWatcher.on.mock.calls[1][0]).toBe('change');
     expect(mockWatcher.on.mock.calls[2][0]).toBe('unlink');
@@ -64,14 +64,14 @@ describe(`startWatchingFiles`, () => {
 
 describe(`uploadFile`, () => {
   it(`should read file`, () => {
-    uploadFile('a/b/c');
+    uploadFile('a/b/c', 'x/y/z');
     expect(fs.readFile.mock.calls[0][0]).toBe('a/b/c');
   });
 
   it(`should call database API methods`, () => {
-    uploadFile('a/b/c');
+    uploadFile('a/b/c', 'x/y/z');
     expect(fs.readFile.mock.calls[0][0]).toBe('a/b/c');
-    expect(database.ref).toHaveBeenLastCalledWith('postContent/b');
+    expect(database.ref).toHaveBeenLastCalledWith('x/y/z/b');
     expect(database.ref().set).toHaveBeenLastCalledWith('a/b/c');
     expect(database.ref().set().catch).toHaveBeenLastCalledWith(logger.error);
   });
@@ -79,15 +79,15 @@ describe(`uploadFile`, () => {
 
 describe(`deleteFile`, () => {
   it(`should call database API methods`, () => {
-    deleteFile('a/b/c');
-    expect(database.ref).toHaveBeenLastCalledWith('postContent/b');
+    deleteFile('a/b/c', 'x/y/z');
+    expect(database.ref).toHaveBeenLastCalledWith('x/y/z/b');
     expect(database.ref().remove).toHaveBeenCalled();
     expect(database.ref().remove().catch).toHaveBeenLastCalledWith(logger.error);
   });
 });
 
-describe(`getPathKey`, () => {
+describe(`getDestination`, () => {
   it(`should return the name of the root folder's subfolder`, () => {
-    expect(getRemotePath('a/b/c')).toBe('postContent/b');
+    expect(getDestination('a/b/c', 'x/y/z')).toBe('x/y/z/b');
   });
 });

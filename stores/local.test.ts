@@ -10,7 +10,7 @@ import { sync } from './local';
 
 describe(`sync`, () => {
   it(`should log action`, () => {
-    sync();
-    expect(logger.log).toHaveBeenLastCalledWith('[STORE] Local');
+    sync('a', 'b');
+    expect(logger.log).toHaveBeenLastCalledWith('[LOCAL] a -> b');
   });
 });
