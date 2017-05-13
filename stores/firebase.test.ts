@@ -53,23 +53,16 @@ describe(`sync`, () => {
 
 describe(`startWatchingFiles`, () => {
   it(`should call corresponding methods on file events`, () => {
-    const mocWatcher: any = { on: jest.fn(() => mocWatcher) };
-    startWatchingFiles(mocWatcher)();
-    expect(mocWatcher.on.mock.calls).toMatchObject([
-      ['add', uploadFile],
-      ['change', uploadFile],
-      ['unlink', deleteFile],
-      ['error', logger.error]
-    ]);
+    const mockWatcher: any = { on: jest.fn(() => mockWatcher) };
+    startWatchingFiles(mockWatcher)();
+    expect(mockWatcher.on.mock.calls[0][0]).toBe('add');
+    expect(mockWatcher.on.mock.calls[1][0]).toBe('change');
+    expect(mockWatcher.on.mock.calls[2][0]).toBe('unlink');
+    expect(mockWatcher.on.mock.calls[3][0]).toBe('error');
   });
 });
 
 describe(`uploadFile`, () => {
-  it(`should log action`, () => {
-    uploadFile('a/b/c');
-    expect(logger.log).toHaveBeenLastCalledWith('[UPLOAD]', 'a/b/c');
-  });
-
   it(`should read file`, () => {
     uploadFile('a/b/c');
     expect(fs.readFile.mock.calls[0][0]).toBe('a/b/c');
@@ -85,11 +78,6 @@ describe(`uploadFile`, () => {
 });
 
 describe(`deleteFile`, () => {
-  it(`should log action`, () => {
-    deleteFile('a/b/c');
-    expect(logger.log).toHaveBeenLastCalledWith('[DELETE]', 'a/b/c');
-  });
-
   it(`should call database API methods`, () => {
     deleteFile('a/b/c');
     expect(database.ref).toHaveBeenLastCalledWith('postContent/b');

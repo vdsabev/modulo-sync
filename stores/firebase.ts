@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { logger } from '../logger';
-import { flowRight, promisify } from '../utils';
+import { flowRight, promisify, partial } from '../utils';
 
 const firebaseAdmin = require('firebase-admin');
 const firebaseKey = require(path.resolve('private/firebase.json'));
@@ -16,22 +16,20 @@ const firebase = firebaseAdmin.initializeApp({
 const localFolder = 'posts';
 const database = firebase.database();
 
-export const sync = () => {
-  logger.log('[STORE] Firebase');
+export const sync = flowRight(partial(logger.log, '[STORE] Firebase'), () => {
   const watcher = watch(`./${localFolder}/*/content.md`, { persistent: true });
   watcher.on('ready', startWatchingFiles(watcher));
-};
+});
 
 export const startWatchingFiles = (watcher: FSWatcher) => () => {
   watcher
-    .on('add', uploadFile)
-    .on('change', uploadFile)
-    .on('unlink', deleteFile)
-    .on('error', logger.error);
+    .on('add', flowRight(partial(logger.log, '[CREATE]'), uploadFile))
+    .on('change', flowRight(partial(logger.log, '[UPDATE]'), uploadFile))
+    .on('unlink', flowRight(partial(logger.log, '[DELETE]'), deleteFile))
+    .on('error', partial(logger.error, '[ERROR]'));
 };
 
 export const uploadFile = async (localPath: string) => {
-  logger.log('[UPLOAD]', localPath);
   const key = getPathKey(localPath);
   const readFile = promisify(fs.readFile);
   const file = await readFile(localPath, 'utf8').catch(logger.error);
@@ -39,7 +37,6 @@ export const uploadFile = async (localPath: string) => {
 };
 
 export const deleteFile = async (localPath: string) => {
-  logger.log('[DELETE]', localPath);
   const key = getPathKey(localPath);
   await database.ref(`postContent/${key}`).remove().catch(logger.error);
 };
