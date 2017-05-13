@@ -1,6 +1,6 @@
 import 'jest';
 
-import * as logger from './logger';
+import { logger } from './logger';
 
 describe(`log`, () => {
   it(`should equal console.log`, () => {

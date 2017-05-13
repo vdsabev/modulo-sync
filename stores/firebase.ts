@@ -2,8 +2,8 @@ import { watch, FSWatcher } from 'chokidar';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import * as logger from '../logger';
-import { promisify } from '../utils';
+import { logger } from '../logger';
+import { flowRight, promisify } from '../utils';
 
 const firebaseAdmin = require('firebase-admin');
 const firebaseKey = require(path.resolve('private/firebase.json'));
@@ -13,7 +13,7 @@ const firebase = firebaseAdmin.initializeApp({
   databaseURL: process.env.FIREBASE_DATABASE_URL
 });
 
-const localFolder = process.argv[2] || 'posts';
+const localFolder = 'posts';
 const database = firebase.database();
 
 export const sync = () => {
@@ -44,7 +44,4 @@ export const deleteFile = async (localPath: string) => {
   await database.ref(`postContent/${key}`).remove().catch(logger.error);
 };
 
-export const getPathKey = (localPath: string): string => {
-  const [root, key, filename] = localPath.split(path.sep);
-  return key;
-};
+export const getPathKey = (localPath: string): string => localPath.split(path.sep)[1];
