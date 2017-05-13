@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { logger } from '../logger';
-import { pipe, sequence, promisify, partial } from '../utils';
+import { _, pipe, sequence, promisify, partial } from '../utils';
 
 const firebaseAdmin = require('firebase-admin');
 const firebaseKey = require(path.resolve('private/firebase.json'));
@@ -24,14 +24,9 @@ export const sync = (source: string, destination: string) => {
 
 export const startWatchingFiles = (watcher: FSWatcher, destination: string) => () => {
   watcher
-    // TODO: Use `partial(logger.log, '[CREATE]', _)`
-    // TODO: Use `partial(uploadFile, _, destination)`
-    .on('add', sequence(partial(logger.log, '[CREATE]'), (source: string) => uploadFile(source, destination)))
-    // TODO: Use `partial(logger.log, '[UPDATE]', _)`
-    .on('change', sequence(partial(logger.log, '[UPDATE]'), (source: string) => uploadFile(source, destination)))
-    // TODO: Use `partial(logger.log, '[DELETE]', _)`
-    // TODO: Use `partial(deleteFile, _, destination)`
-    .on('unlink', sequence(partial(logger.log, '[DELETE]'), (source: string) => deleteFile(source, destination)))
+    .on('add', sequence(partial(logger.log, '[CREATE]'), partial(uploadFile, _, destination)))
+    .on('change', sequence(partial(logger.log, '[UPDATE]'), partial(uploadFile, _, destination)))
+    .on('unlink', sequence(partial(logger.log, '[DELETE]'), partial(deleteFile, _, destination)))
     .on('error', partial(logger.error, '[ERROR]'));
 };
 

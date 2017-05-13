@@ -1,6 +1,6 @@
 import 'jest';
 
-import { assertNever, promisify, sequence, left, right, pipe, compose, invoke, constant, partial, last } from './utils';
+import { _, replacePlaceholder, assertNever, promisify, sequence, left, right, pipe, compose, invoke, constant, partial, first, last } from './utils';
 
 describe(`assertNever`, () => {
   it(`should throw an error when called`, () => {
@@ -150,6 +150,7 @@ describe(`constant`, () => {
 
 describe(`partial`, () => {
   const add = (a: number, b = 0, c = 0) => a + b + c;
+  const append = (a: string, b = '', c = '') => a + b + c;
 
   it(`should call the function with 1 partial argument`, () => {
     const add1 = partial(add, 1);
@@ -164,6 +165,58 @@ describe(`partial`, () => {
   it(`should call the function with 3 partial arguments`, () => {
     const add1And2And3 = partial(add, 1, 2, 3);
     expect(add1And2And3()).toBe(6);
+  });
+});
+
+describe(`replacePlaceholder`, () => {
+  it(`000`, () => {
+    expect(replacePlaceholder([1, 2, 3], [4, 5, 6])).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it(`001`, () => {
+    expect(replacePlaceholder([1, 2, _], [4, 5, 6])).toEqual([1, 2, 4, 5, 6]);
+  });
+
+  it(`010`, () => {
+    expect(replacePlaceholder([1, _, 3], [4, 5, 6])).toEqual([1, 4, 3, 5, 6]);
+  });
+
+  it(`011`, () => {
+    expect(replacePlaceholder([1, _, _], [4, 5, 6])).toEqual([1, 4, 5, 6]);
+  });
+
+  it(`100`, () => {
+    expect(replacePlaceholder([_, 2, 3], [4, 5, 6])).toEqual([4, 2, 3, 5, 6]);
+  });
+
+  it(`101`, () => {
+    expect(replacePlaceholder([_, 2, _], [4, 5, 6])).toEqual([4, 2, 5, 6]);
+  });
+
+  it(`110`, () => {
+    expect(replacePlaceholder([_, _, 3], [4, 5, 6])).toEqual([4, 5, 3, 6]);
+  });
+
+  it(`111`, () => {
+    expect(replacePlaceholder([_, _, _], [4, 5, 6])).toEqual([4, 5, 6]);
+  });
+});
+
+describe(`first`, () => {
+  it(`should return first array item when multiple items`, () => {
+    expect(first([1, 2, 3])).toBe(1);
+  });
+
+  it(`should return first array item when single item`, () => {
+    expect(first([1])).toBe(1);
+  });
+
+  it(`should return undefined when no items`, () => {
+    expect(first([])).toBe(undefined);
+  });
+
+  it(`should return undefined when null`, () => {
+    expect(first(null)).toBe(undefined);
   });
 });
 
