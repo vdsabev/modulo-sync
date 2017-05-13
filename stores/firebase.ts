@@ -40,4 +40,4 @@ export const deleteFile = async (source: string, destination: string) => {
   await database.ref(getDestination(source, destination)).remove().catch(logger.error);
 };
 
-export const getDestination = (source: string, destination: string): string => [destination, source.split(path.sep)[1]].join('/');
+export const getDestination = (source: string, destination: string): string => `${destination}/${source.split(path.sep)[1]}`;
