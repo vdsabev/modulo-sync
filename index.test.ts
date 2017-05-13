@@ -2,7 +2,7 @@ import 'jest';
 
 import { constant } from './utils';
 
-const glob = { sync: jest.fn(constant({ forEach: jest.fn() })) };
+const glob = { sync: jest.fn(constant({ map: jest.fn() })) };
 jest.mock('glob', () => glob);
 
 import { requireAndSync } from './index';
@@ -18,5 +18,5 @@ describe(`requireAndSync`, () => {
 
 it(`should call glob.sync`, () => {
   expect(glob.sync).toHaveBeenLastCalledWith('./stores/!(*.test).js', { cwd: __dirname });
-  expect(glob.sync().forEach).toHaveBeenLastCalledWith(requireAndSync);
+  expect(glob.sync().map).toHaveBeenLastCalledWith(requireAndSync);
 });

@@ -9,7 +9,7 @@
 // `npm start local://./posts/:postId/content.md,firebase://postContent/${postId} local://./posts/:postId/!(content.md),gcs://posts/${postId}`
 
 import * as glob from 'glob';
-import { flowRight, invoke } from './utils';
+import { pipe, invoke } from './utils';
 
-export const requireAndSync = flowRight(require, invoke('sync'));
-glob.sync('./stores/!(*.test).js', { cwd: __dirname }).forEach(requireAndSync);
+export const requireAndSync = pipe(require, invoke('sync'));
+glob.sync('./stores/!(*.test).js', { cwd: __dirname }).map(requireAndSync);

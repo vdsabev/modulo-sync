@@ -31,7 +31,7 @@ import { logger } from '../logger';
 
 jest.mock(path.resolve('private/firebase.json'), () => '', { virtual: true });
 
-import { sync, startWatchingFiles, uploadFile, deleteFile, getPathKey } from './firebase';
+import { sync, startWatchingFiles, uploadFile, deleteFile, getRemotePath } from './firebase';
 
 describe(`sync`, () => {
   it(`should log action`, () => {
@@ -88,7 +88,6 @@ describe(`deleteFile`, () => {
 
 describe(`getPathKey`, () => {
   it(`should return the name of the root folder's subfolder`, () => {
-    const localPath = ['a', 'b', 'c'].join('/');
-    expect(getPathKey(localPath)).toBe('b');
+    expect(getRemotePath('a/b/c')).toBe('postContent/b');
   });
 });

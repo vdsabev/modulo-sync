@@ -1,6 +1,6 @@
 import 'jest';
 
-import { assertNever, promisify, left, right, flowRight, flowLeft, invoke, constant, partial, last } from './utils';
+import { assertNever, promisify, sequence, left, right, pipe, compose, invoke, constant, partial, last } from './utils';
 
 describe(`assertNever`, () => {
   it(`should throw an error when called`, () => {
@@ -51,67 +51,72 @@ describe(`promisify`, () => {
 });
 
 describe(`left`, () => {
-  it(`should call left function when value is true`, () => {
+  it(`should call left function with rest arguments when value is true`, () => {
     const l = jest.fn(); const r = jest.fn();
-    left(l, r)(true);
-    expect(l).toHaveBeenLastCalledWith(true);
+    left(l, r)(true, 'a', 'b');
+    expect(l).toHaveBeenLastCalledWith(true, 'a', 'b');
     expect(r).not.toHaveBeenCalled();
   });
 
-  it(`should call left function with rest arguments`, () => {
+  it(`should call right function with rest arguments when value is false`, () => {
     const l = jest.fn(); const r = jest.fn();
-    left(l, r)('a', 'b', 'c');
-    expect(l).toHaveBeenLastCalledWith('a', 'b', 'c');
-    expect(r).not.toHaveBeenCalled();
-  });
-
-  it(`should call right function when value is false`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    left(l, r)(false);
+    left(l, r)(false, 'a', 'b');
     expect(l).not.toHaveBeenCalled();
-    expect(r).toHaveBeenLastCalledWith(false);
-  });
-
-  it(`should call right function with rest arguments`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    left(l, r)(null, 'b', 'c');
-    expect(l).not.toHaveBeenCalled();
-    expect(r).toHaveBeenLastCalledWith(null, 'b', 'c');
+    expect(r).toHaveBeenLastCalledWith(false, 'a', 'b');
   });
 });
 
 describe(`right`, () => {
-  const l = jest.fn();
-  const r = jest.fn();
-
-  it(`should call right function when value is true`, () => {
-    right(l, r)(true);
-    expect(r).toHaveBeenLastCalledWith(true);
+  it(`should call right function with rest arguments when value is true`, () => {
+    const l = jest.fn(); const r = jest.fn();
+    right(l, r)(true, 'a', 'b');
+    expect(l).not.toHaveBeenCalled();
+    expect(r).toHaveBeenLastCalledWith(true, 'a', 'b');
   });
 
-  it(`should call left function when value is false`, () => {
-    right(l, r)(false);
-    expect(l).toHaveBeenLastCalledWith(false);
+  it(`should call left function with rest arguments when value is false`, () => {
+    const l = jest.fn(); const r = jest.fn();
+    right(l, r)(false, 'a', 'b');
+    expect(l).toHaveBeenLastCalledWith(false, 'a', 'b');
+    expect(r).not.toHaveBeenCalled();
   });
 });
 
-describe(`flowRight`, () => {
+describe(`pipe`, () => {
   const add1 = (value: number) => value + 1;
   const multiplyBy2 = (value: number) => value * 2;
 
   it(`should call left function, then right function`, () => {
-    const result = flowRight(add1, multiplyBy2)(0);
+    const result = pipe(add1, multiplyBy2)(0);
     expect(result).toBe(2);
   });
 });
 
-describe(`flowLeft`, () => {
+describe(`compose`, () => {
   const add1 = (value: number) => value + 1;
   const multiplyBy2 = (value: number) => value * 2;
 
   it(`should call right function, then left function`, () => {
-    const result = flowLeft(add1, multiplyBy2)(0);
+    const result = compose(add1, multiplyBy2)(0);
     expect(result).toBe(1);
+  });
+});
+
+describe(`sequence`, () => {
+  const double = (n: number) => n * 2;
+  const tripple = (n: number) => n * 3;
+  const quadrupple = (n: number) => n * 4;
+
+  it(`should execute 1 function`, () => {
+    expect(sequence(double)(2)).toBe(4);
+  });
+
+  it(`should execute 2 functions and return last result`, () => {
+    expect(sequence(double, tripple)(2)).toBe(6);
+  });
+
+  it(`should execute 3 functions and return last result`, () => {
+    expect(sequence(double, tripple, quadrupple)(2)).toBe(8);
   });
 });
 
