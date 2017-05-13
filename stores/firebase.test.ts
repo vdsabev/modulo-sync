@@ -29,6 +29,8 @@ jest.mock('path', () => ({ ...path, sep: '/' }));
 jest.mock('../logger', () => ({ log: jest.fn(), error: jest.fn() }));
 import * as logger from '../logger';
 
+jest.mock(path.resolve('private/firebase.json'), () => '', { virtual: true });
+
 import { sync, startWatchingFiles, uploadFile, deleteFile, getPathKey } from './firebase';
 
 describe(`sync`, () => {

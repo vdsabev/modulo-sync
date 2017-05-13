@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "modulo-sync",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
@@ -35,7 +35,7 @@
       "tsx",
       "js"
     ],
-    "testRegex": "(/__tests__/.*|\\.test)\\.(ts|tsx|js)$",
+    "testRegex": "(/__tests__/.*|\\.test)\\.(ts|tsx)$",
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     }
