@@ -1,6 +1,6 @@
 import 'jest';
 
-import { assertNever, left, right, flowRight, flowLeft, invoke } from './utils';
+import { assertNever, promisify, left, right, flowRight, flowLeft, invoke, constant, last } from './utils';
 
 describe(`assertNever`, () => {
   it(`should throw an error when called`, () => {
@@ -17,18 +17,66 @@ describe(`assertNever`, () => {
   });
 });
 
-describe(`left`, () => {
-  const l = jest.fn();
-  const r = jest.fn();
+describe(`promisify`, () => {
+  const asyncDiv = (a: number, b: number, next: Function) => {
+    if (!b) return next('Division by 0!');
+    next(null, a / b);
+  };
 
+  it(`should return a function`, () => {
+    const fn = jest.fn();
+    const promisifiedFn = promisify(fn);
+    expect(typeof promisifiedFn).toBe('function');
+  });
+
+  it(`should return a promise when called`, () => {
+    const fn = jest.fn();
+    const promisifiedFn = promisify(fn);
+    expect(promisifiedFn()).toBeInstanceOf(Promise);
+  });
+
+  it(`should resolve promise`, async () => {
+    const promisifiedDiv = promisify(asyncDiv);
+    const errorHandler = jest.fn();
+    expect(await promisifiedDiv(2, 2).catch(errorHandler)).toBe(1);
+    expect(errorHandler).not.toHaveBeenCalled();
+  });
+
+  it(`should reject promise`, async () => {
+    const promisifiedDiv = promisify(asyncDiv);
+    const errorHandler = jest.fn();
+    expect(await promisifiedDiv(2, 0).catch(errorHandler)).toBe(undefined);
+    expect(errorHandler).toHaveBeenLastCalledWith('Division by 0!');
+  });
+});
+
+describe(`left`, () => {
   it(`should call left function when value is true`, () => {
+    const l = jest.fn(); const r = jest.fn();
     left(l, r)(true);
-    expect(l).toHaveBeenCalledWith(true);
+    expect(l).toHaveBeenLastCalledWith(true);
+    expect(r).not.toHaveBeenCalled();
+  });
+
+  it(`should call left function with rest arguments`, () => {
+    const l = jest.fn(); const r = jest.fn();
+    left(l, r)('a', 'b', 'c');
+    expect(l).toHaveBeenLastCalledWith('a', 'b', 'c');
+    expect(r).not.toHaveBeenCalled();
   });
 
   it(`should call right function when value is false`, () => {
+    const l = jest.fn(); const r = jest.fn();
     left(l, r)(false);
-    expect(r).toHaveBeenCalledWith(false);
+    expect(l).not.toHaveBeenCalled();
+    expect(r).toHaveBeenLastCalledWith(false);
+  });
+
+  it(`should call right function with rest arguments`, () => {
+    const l = jest.fn(); const r = jest.fn();
+    left(l, r)(null, 'b', 'c');
+    expect(l).not.toHaveBeenCalled();
+    expect(r).toHaveBeenLastCalledWith(null, 'b', 'c');
   });
 });
 
@@ -38,12 +86,12 @@ describe(`right`, () => {
 
   it(`should call right function when value is true`, () => {
     right(l, r)(true);
-    expect(r).toHaveBeenCalledWith(true);
+    expect(r).toHaveBeenLastCalledWith(true);
   });
 
   it(`should call left function when value is false`, () => {
     right(l, r)(false);
-    expect(l).toHaveBeenCalledWith(false);
+    expect(l).toHaveBeenLastCalledWith(false);
   });
 });
 
@@ -82,5 +130,33 @@ describe(`invoke`, () => {
     const getWithoutFirstAndLast = invoke('slice', 1, -1);
     const array = [1, 2, 3, 4, 5];
     expect(getWithoutFirstAndLast(array)).toEqual([2, 3, 4]);
+  });
+});
+
+describe(`constant`, () => {
+  it(`should return a function`, () => {
+    expect(typeof constant('a')).toBe('function');
+  });
+
+  it(`should return the vaue passed when called`, () => {
+    expect(constant('a')()).toBe('a');
+  });
+});
+
+describe(`last`, () => {
+  it(`should return last array item when multiple items`, () => {
+    expect(last([1, 2, 3])).toBe(3);
+  });
+
+  it(`should return last array item when single item`, () => {
+    expect(last([1])).toBe(1);
+  });
+
+  it(`should return undefined when no items`, () => {
+    expect(last([])).toBe(undefined);
+  });
+
+  it(`should return undefined when null`, () => {
+    expect(last(null)).toBe(undefined);
   });
 });

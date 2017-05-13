@@ -11,5 +11,5 @@
 import * as glob from 'glob';
 import { flowRight, invoke } from './utils';
 
-const requireAndSync = flowRight(require, invoke('sync'));
+export const requireAndSync = flowRight(require, invoke('sync'));
 glob.sync('./stores/!(*.test).js', { cwd: __dirname }).forEach(requireAndSync);

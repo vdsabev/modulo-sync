@@ -19,7 +19,7 @@ describe(`maybeError`, () => {
     const originalError = logger.error;
     (<any>logger).error = jest.fn();
     logger.maybeError(true);
-    expect(logger.error).toHaveBeenCalledWith(true);
+    expect(logger.error).toHaveBeenLastCalledWith(true);
     (<any>logger).error = originalError;
   });
 
@@ -27,7 +27,7 @@ describe(`maybeError`, () => {
     const originalError = logger.error;
     (<any>logger).error = jest.fn();
     logger.maybeError(false);
-    expect(logger.error).not.toHaveBeenCalledWith(false);
+    expect(logger.error).not.toHaveBeenLastCalledWith(false);
     (<any>logger).error = originalError;
   });
 });
