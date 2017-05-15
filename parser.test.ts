@@ -4,20 +4,20 @@ import { parse } from './parser';
 
 describe(`parse`, () => {
   it(`should extract local store from string`, () => {
-    const store: Store = parse('local://./posts/:postId/content.md');
-    expect(store.type).toBe('local');
-    expect(store.path).toBe('./posts/:postId/content.md');
+    const { source, destination } = parse('local://./posts/:postId/content.md,firebase://postContent/:postId');
+    expect(source).toEqual({ type: 'local', path: './posts/:postId/content.md' });
+    expect(destination).toEqual({ type: 'firebase', path: 'postContent/:postId' });
   });
 
   it(`should extract firebase store from string`, () => {
-    const store: Store = parse('firebase://postContent/:postId');
-    expect(store.type).toBe('firebase');
-    expect(store.path).toBe('postContent/:postId');
+    const { source, destination } = parse('firebase://postContent/:postId,gcs://posts/:postId');
+    expect(source).toEqual({ type: 'firebase', path: 'postContent/:postId' });
+    expect(destination).toEqual({ type: 'gcs', path: 'posts/:postId' });
   });
 
   it(`should extract gcs store from string`, () => {
-    const store: Store = parse('gcs://posts/:postId');
-    expect(store.type).toBe('gcs');
-    expect(store.path).toBe('posts/:postId');
+    const { source, destination } = parse('gcs://posts/:postId,local://./posts/:postId/content.md');
+    expect(source).toEqual({ type: 'gcs', path: 'posts/:postId' });
+    expect(destination).toEqual({ type: 'local', path: './posts/:postId/content.md' });
   });
 });

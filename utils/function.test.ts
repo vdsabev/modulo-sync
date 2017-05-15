@@ -1,6 +1,6 @@
 import 'jest';
 
-import { left, right, invoke, partial, promisify } from './function';
+import { left, right, invoke, sequence, partial, promisify } from './function';
 
 describe(`left`, () => {
   it(`should call left function with rest arguments when value is true`, () => {
@@ -49,6 +49,24 @@ describe(`invoke`, () => {
     const getWithoutFirstAndLast = invoke('slice', 1, -1);
     const array = [1, 2, 3, 4, 5];
     expect(getWithoutFirstAndLast(array)).toEqual([2, 3, 4]);
+  });
+});
+
+describe(`sequence`, () => {
+  const double = (n: number) => n * 2;
+  const tripple = (n: number) => n * 3;
+  const quadrupple = (n: number) => n * 4;
+
+  it(`should execute 1 function`, () => {
+    expect(sequence(double)(2)).toBe(4);
+  });
+
+  it(`should execute 2 functions and return last result`, () => {
+    expect(sequence(double, tripple)(2)).toBe(6);
+  });
+
+  it(`should execute 3 functions and return last result`, () => {
+    expect(sequence(double, tripple, quadrupple)(2)).toBe(8);
   });
 });
 

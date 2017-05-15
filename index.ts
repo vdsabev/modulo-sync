@@ -6,17 +6,16 @@
 import * as glob from 'glob';
 
 import { parse } from './parser';
-import { get, isContained } from './utils';
+import { compose, pluck, values, isContained } from './utils';
 
-const sourceStore = parse('local://./posts/*/content.md');
-const destinationStore = parse('firebase://postContent');
-
-export const isInOptions = isContained([sourceStore.type, destinationStore.type]);
+const options = parse('local://./posts/*/content.md,firebase://postContent');
+const pluckTypes = compose(pluck('type'), values);
+const isInTypes = isContained(pluckTypes(options));
 
 export const requireAndSync = (filename: string) => {
   const store: StoreModule = require(filename);
-  if (isInOptions(store.type)) {
-    store.sync({ source: sourceStore, destination: destinationStore });
+  if (isInTypes(store.type)) {
+    store.sync(options);
   }
 };
 

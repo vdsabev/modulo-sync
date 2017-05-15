@@ -1,5 +1,4 @@
-import { invert } from './combinator';
-import { compose } from './compose';
+import { compose, invert, not } from './combinator';
 import { get, keys, values } from './object';
 
 // TODO: Rewrite in point-free style
@@ -25,6 +24,7 @@ export const assertNever = (obj: never) => {
 };
 
 export const equal = (value1: any) => (value2: any) => value1 === value2;
+export const notEqual = compose(not, equal);
 
 export const type = (value: any) => typeof value;
 

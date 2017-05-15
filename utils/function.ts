@@ -6,6 +6,8 @@ export const right = (l: Function, r: Function) => (value: any, ...args: any[]) 
 
 export const invoke = (fnName: string, ...args: any[]) => (obj: any) => obj[fnName](...args);
 
+export const sequence = (...fns: Function[]) => (...x: any[]) => last(fns.map((fn) => fn(...x)));
+
 export const partial = (fn: Function, ...partialArgs: any[]) => (...otherArgs: any[]) => fn(...replacePlaceholderInArray(partialArgs, otherArgs));
 
 export const promisify = (fn: Function) => (...args: any[]) => new Promise(
