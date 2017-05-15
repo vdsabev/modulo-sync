@@ -10,7 +10,7 @@ import { sync } from './local';
 
 describe(`sync`, () => {
   it(`should log action`, () => {
-    sync('a', 'b');
+    sync({ source: { type: 'local', path: 'a' }, destination: { type: 'local', path: 'b' } });
     expect(logger.log).toHaveBeenLastCalledWith('[LOCAL] a -> b');
   });
 });

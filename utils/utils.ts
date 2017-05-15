@@ -1,16 +1,24 @@
-import { constant } from './combinator';
+import { invert } from './combinator';
 import { compose } from './compose';
+import { get, keys, values } from './object';
 
-export const get = (key: string) => (obj: any) => obj[key];
+// TODO: Rewrite in point-free style
+export const contains = (...valuesToFind: any[]) => <T>(obj: T): boolean => {
+  const getLength = get('length');
+  const hasSameLengthAs = compose(equal, getLength);
+  const hasSameLengthAsValues = compose(hasSameLengthAs(valuesToFind), getLength);
 
-export const set = (key: string) => (obj: any, value: any) => ({ ...obj, [key]: value });
+  if (Array.isArray(obj)) return hasSameLengthAsValues(valuesToFind.filter((value) => obj.indexOf(value) !== -1));
 
-export const contains = (value: any) => <T>(obj: T): boolean => {
-  if (Array.isArray(obj)) return obj.indexOf(value) !== -1;
-  // TODO: Rewrite using equal & get
-  if (obj && typeof obj === 'object') return Object.keys(obj).find((key) => (<any>obj)[key] === value) != null;
+  if (obj && typeof obj === 'object') {
+    const objValues = values(obj);
+    return hasSameLengthAsValues(valuesToFind.filter((value) => objValues.indexOf(value) !== -1));
+  }
+
   return false;
 };
+
+export const isContained = invert(contains);
 
 export const assertNever = (obj: never) => {
   throw new Error('Unexpected object');

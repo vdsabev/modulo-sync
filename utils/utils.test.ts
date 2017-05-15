@@ -1,28 +1,10 @@
 import 'jest';
 
-import { get, set, contains, assertNever, equal, result, type, is } from './utils';
-
-describe(`get`, () => {
-  it(`should create a function that gets property`, () => {
-    const getName = get('name');
-    expect(typeof getName).toBe('function');
-    expect(getName({ id: 0, name: 'a' })).toBe('a');
-  });
-});
-
-describe(`set`, () => {
-  it(`should create a function that sets property`, () => {
-    const setName = set('name');
-    expect(typeof setName).toBe('function');
-    const userA = { id: 0, name: 'a' };
-    const userB = setName(userA, 'b');
-    expect(userB.name).toBe('b');
-    expect(userB).not.toBe(userA);
-  });
-});
+import { contains, assertNever, equal, result, type, is } from './utils';
 
 describe(`contains`, () => {
   const contains2 = contains(2);
+  const contains2And3 = contains(2, 3);
 
   it(`should return true if array contains value`, () => {
     expect(contains2([1, 2, 3])).toBe(true);
@@ -32,12 +14,36 @@ describe(`contains`, () => {
     expect(contains2([4, 5, 6])).toBe(false);
   });
 
+  it(`should return true if array contains all values`, () => {
+    expect(contains2And3([1, 2, 3])).toBe(true);
+  });
+
+  it(`should return false if array doesn't contain all values`, () => {
+    expect(contains2And3([3, 4, 5])).toBe(false);
+  });
+
+  it(`should return false if array doesn't contain any values`, () => {
+    expect(contains2And3([4, 5, 6])).toBe(false);
+  });
+
   it(`should return true if object contains value`, () => {
     expect(contains2({ a: 1, b: 2, c: 3 })).toBe(true);
   });
 
   it(`should return false if object doesn't contain value`, () => {
     expect(contains2({ a: 4, b: 5, c: 6 })).toBe(false);
+  });
+
+  it(`should return true if object contains all values`, () => {
+    expect(contains2And3({ a: 1, b: 2, c: 3 })).toBe(true);
+  });
+
+  it(`should return false if object doesn't contain all values`, () => {
+    expect(contains2And3({ a: 3, b: 4, c: 5 })).toBe(false);
+  });
+
+  it(`should return false if object doesn't contain any values`, () => {
+    expect(contains2And3({ a: 4, b: 5, c: 6 })).toBe(false);
   });
 
   it(`should return false for null`, () => {

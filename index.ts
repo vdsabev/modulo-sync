@@ -4,14 +4,21 @@
 // TODO: Add option for full initial download
 
 import * as glob from 'glob';
-import { pipe, invoke } from './utils';
 
-const localPath = './posts/*/content.md';
-const remotePath = 'postContent';
+import { parse } from './parser';
+import { get, isContained } from './utils';
+
+const sourceStore = parse('local://./posts/*/content.md');
+const destinationStore = parse('firebase://postContent');
+
+export const isInOptions = isContained([sourceStore.type, destinationStore.type]);
 
 export const requireAndSync = (filename: string) => {
-  const store = require(filename);
-  store.sync({ source: filename, destination: remotePath });
+  const store: StoreModule = require(filename);
+  if (isInOptions(store.type)) {
+    store.sync({ source: sourceStore, destination: destinationStore });
+  }
 };
 
-glob.sync('./stores/!(*.test).js', { cwd: __dirname }).map(requireAndSync);
+const storesGlob = './stores/!(*.test).js';
+glob.sync(storesGlob, { cwd: __dirname }).map(requireAndSync);

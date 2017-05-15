@@ -1,6 +1,42 @@
 import 'jest';
 
-import { _, replacePlaceholderInObject, replacePlaceholderInArray } from './placeholder';
+import { _, isPlaceholder, hasPlaceholder, replacePlaceholderInObject, replacePlaceholderInArray } from './placeholder';
+
+describe(`isPlaceholder`, () => {
+  it(`should return true for _`, () => {
+    expect(isPlaceholder(_)).toBe(true);
+  });
+
+  it(`should return false for anything else`, () => {
+    expect(isPlaceholder({ type: 'placeholder' })).toBe(false);
+  });
+});
+
+describe(`hasPlaceholder`, () => {
+  it(`should return true if array contains placeholder`, () => {
+    expect(hasPlaceholder([1, _, 3])).toBe(true);
+  });
+
+  it(`should return true if array only contains placeholders`, () => {
+    expect(hasPlaceholder([_, _])).toBe(true);
+  });
+
+  it(`should return false if array doesn't contain placeholder`, () => {
+    expect(hasPlaceholder([1, 2, 3])).toBe(false);
+  });
+
+  it(`should return true if object contains placeholder`, () => {
+    expect(hasPlaceholder({ a: 1, b: _, c: 3 })).toBe(true);
+  });
+
+  it(`should return true if object only contains placeholders`, () => {
+    expect(hasPlaceholder({ a: _, b: _ })).toBe(true);
+  });
+
+  it(`should return false if object doesn't contain placeholder`, () => {
+    expect(hasPlaceholder({ a: 1, b: 2, c: 3 })).toBe(false);
+  });
+});
 
 describe(`replacePlaceholderInObject`, () => {
   it(`00`, () => {
@@ -54,6 +90,8 @@ describe(`replacePlaceholderInArray`, () => {
   });
 
   it(`should replace object values`, () => {
-    expect(replacePlaceholderInArray<any>([{ a: _, b: _ }, { c: _, d: _ }, { e: _, f: _ }], [4, 5, 6])).toEqual([{ a: 4, b: 4 }, { c: 5, d: 5 }, { e: 6, f: 6 }]);
+    type ABC = { a?: number, b?: number, c?: number };
+    const array = replacePlaceholderInArray<ABC>([{ a: _, b: _ }, { a: _, c: _ }, { b: _, c: _ }], [4, 5, 6]);
+    expect(array).toEqual([{ a: 4, b: 4 }, { a: 5, c: 5 }, { b: 6, c: 6 }]);
   });
 });

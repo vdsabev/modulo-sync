@@ -1,6 +1,6 @@
 import 'jest';
 
-import { substitution, constant, identity } from './combinator';
+import { substitution, constant, identity, invert } from './combinator';
 
 describe(`substitution`, () => {
   const add = (x: number) => (y: number) => x + y;
@@ -37,5 +37,12 @@ describe(`identity`, () => {
 
   it(`should return itself`, () => {
     expect(identity(identity)).toBe(identity);
+  });
+});
+
+describe(`invert`, () => {
+  it(`should switch argument order`, () => {
+    const divide = (x: number) => (y: number) => x / y;
+    expect(divide(10)(5)).toBe(invert(divide)(5)(10));
   });
 });

@@ -1,6 +1,8 @@
 import { logger } from '../logger';
 
-export const sync = (source: string, destination: string) => {
-  logger.log(`[LOCAL] ${source} -> ${destination}`);
+export const type: StoreType = 'local';
+
+export const sync = ({ source, destination }: StoreOptions) => {
+  logger.log(`[LOCAL] ${source.path} -> ${destination.path}`);
   // TODO
 };
