@@ -35,17 +35,17 @@ import { sync, startWatchingFiles, uploadFile, deleteFile, getDestination } from
 
 describe(`sync`, () => {
   it(`should log action`, () => {
-    sync('a', 'b');
+    sync({ source: 'a', destination: 'b' });
     expect(logger.log).toHaveBeenLastCalledWith('[FIREBASE] a -> b');
   });
 
   it(`should call watch with the correct parameters`, () => {
-    sync('a', 'b');
+    sync({ source: 'a', destination: 'b' });
     expect(watch).toHaveBeenLastCalledWith('a', { persistent: true });
   });
 
   it(`should start watching files when ready`, () => {
-    sync('a', 'b');
+    sync({ source: 'a', destination: 'b' });
     expect(last<any>(watcher.on.mock.calls)[0]).toBe('ready');
     expect(typeof last<any>(watcher.on.mock.calls)[1]).toBe('function');
   });

@@ -11,8 +11,9 @@ describe(`requireAndSync`, () => {
   it(`should require a file, then call its sync method`, () => {
     const file = { sync: jest.fn() };
     jest.mock('./index.test', () => file);
+
     requireAndSync('./index.test');
-    expect(file.sync).toHaveBeenCalled();
+    expect(file.sync).toHaveBeenLastCalledWith({ source: './index.test', destination: 'postContent' });
   });
 });
 

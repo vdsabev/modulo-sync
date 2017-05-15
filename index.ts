@@ -9,5 +9,9 @@ import { pipe, invoke } from './utils';
 const localPath = './posts/*/content.md';
 const remotePath = 'postContent';
 
-export const requireAndSync = pipe(require, invoke('sync', localPath, remotePath));
+export const requireAndSync = (filename: string) => {
+  const store = require(filename);
+  store.sync({ source: filename, destination: remotePath });
+};
+
 glob.sync('./stores/!(*.test).js', { cwd: __dirname }).map(requireAndSync);

@@ -15,7 +15,7 @@ const firebase = firebaseAdmin.initializeApp({
 
 const database = firebase.database();
 
-export const sync = (source: string, destination: string) => {
+export const sync = ({ source, destination }: StoreOptions) => {
   logger.log(`[FIREBASE] ${source} -> ${destination}`);
 
   const watcher = watch(source, { persistent: true });
