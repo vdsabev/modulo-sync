@@ -1,7 +1,7 @@
 import { equal, contains } from './utils';
-import { keys } from './object';
+import { keys, freeze } from './object';
 
-export const _: any = Object.freeze({ type: 'placeholder' }); // Placeholder
+export const _: any = freeze({ type: 'placeholder' }); // Placeholder
 
 export const isPlaceholder = equal(_);
 export const hasPlaceholder = contains(_);

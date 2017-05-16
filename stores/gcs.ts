@@ -1,11 +1,18 @@
 import { logger } from '../logger';
+import { freeze } from '../utils';
 
 export const type: StoreType = 'gcs';
 
-export const sync = ({ source, destination }: StoreOptions) => {
-  logger.log(`[GCS] ${source.path} -> ${destination.path}`);
-  // TODO
-};
+export const store: Store = freeze({
+  type: <StoreType>'gcs',
+  watch({ sourcePath, destinationPath, destination }: WatchOptions) {
+    logger.log(`[GCS] ${sourcePath} -> ${destinationPath}`);
+    // TODO: Implement
+  },
+  read: (path: string) => Promise.resolve(''),
+  write: (path: string, content: string) => Promise.resolve(),
+  delete: (path: string) => Promise.resolve()
+});
 
 // const googleCloudStorage = require('@google-cloud/storage');
 // const storage = googleCloudStorage({ projectId: process.env.GCS_PROJECT_ID, keyFilename: path.resolve('private/storage.json') });

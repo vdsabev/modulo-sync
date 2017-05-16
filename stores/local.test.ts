@@ -6,11 +6,11 @@ jest.mock('path', () => ({ ...path, sep: '/' }));
 jest.mock('../logger', () => ({ logger: { log: jest.fn(), error: jest.fn() } }));
 import { logger } from '../logger';
 
-import { sync } from './local';
+import { store } from './local';
 
-describe(`sync`, () => {
+describe(`watch`, () => {
   it(`should log action`, () => {
-    sync({ source: { type: 'local', path: 'a' }, destination: { type: 'local', path: 'b' } });
+    store.watch({ sourcePath: 'a', destinationPath: 'b', destination: store });
     expect(logger.log).toHaveBeenLastCalledWith('[LOCAL] a -> b');
   });
 });
