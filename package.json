@@ -1,18 +1,44 @@
 {
   "private": true,
   "name": "modulo-sync",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "node ./build/index.js"
+    "postinstall": "npm run build",
+    "start": "node -r dotenv/config ./build/index.js",
+    "test": "jest",
+    "jest": "jest --watch"
   },
   "dependencies": {
     "@google-cloud/storage": "1.1.0",
     "@types/chokidar": "1.6.0",
-    "@types/dotenv": "4.0.0",
-    "@types/node": "7.0.18",
+    "@types/glob": "5.0.30",
+    "@types/jest": "19.2.3",
     "chokidar": "1.7.0",
-    "dotenv": "4.0.0"
+    "dotenv": "4.0.0",
+    "firebase-admin": "4.2.1",
+    "glob": "7.1.1",
+    "jest": "20.0.1",
+    "ts-jest": "20.0.3",
+    "typescript": "2.3.2"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.{ts,tsx,js}",
+      "!**/*.test.{ts,tsx,js}",
+      "!**/*.d.ts",
+      "!(build|coverage|node_modules|posts|private)/**"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "testRegex": "(/__tests__/.*|\\.test)\\.(ts|tsx)$",
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    }
   }
 }

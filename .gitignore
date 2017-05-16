@@ -1,7 +1,9 @@
+.vscode
 build
+coverage
 node_modules
 posts
+private
 
 .env
-key.json
 *.log
