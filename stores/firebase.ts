@@ -15,11 +15,13 @@ const firebase = firebaseAdmin.initializeApp({
 
 const database = firebase.database();
 
-export const sync = (source: string, destination: string) => {
-  logger.log(`[FIREBASE] ${source} -> ${destination}`);
+export const type: StoreType = 'firebase';
 
-  const watcher = watch(source, { persistent: true });
-  watcher.on('ready', startWatchingFiles(watcher, destination));
+export const sync = ({ source, destination }: StoreOptions) => {
+  logger.log(`[FIREBASE] ${source.path} -> ${destination.path}`);
+
+  const watcher = watch(source.path, { persistent: true });
+  watcher.on('ready', startWatchingFiles(watcher, destination.path));
 };
 
 export const startWatchingFiles = (watcher: FSWatcher, destination: string) => () => {
