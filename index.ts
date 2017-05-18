@@ -1,23 +1,20 @@
+require('dotenv').config();
+
 // TODO: Improve CLI options
 // TODO: Store upload tasks and cancel them if a new one starts at the same path before the previous one has finished
 // TODO: Add option for full initial upload
 // TODO: Add option for full initial download
 
-import * as glob from 'glob';
-
 import { parse } from './parser';
-import { compose, pluck, values, isContained } from './utils';
 
-const options = parse('local://./posts/*/content.md,firebase://postContent');
-const pluckTypes = compose(pluck('type'), values);
-const isInTypes = isContained(pluckTypes(options));
+const options = parse('local://posts/:postId/content.md,firebase://postContent/:postId');
+// const options = parse('local://posts/:postId/content.md,gcs://posts/:postId/content.md');
 
-export const requireAndSync = (filename: string) => {
-  const store: StoreModule = require(filename);
-  if (isInTypes(store.type)) {
-    store.sync(options);
-  }
-};
+const { store: source }: { store: Store } = require(`./stores/${options.source.type}`);
+const { store: destination }: { store: Store } = require(`./stores/${options.destination.type}`);
 
-const storesGlob = './stores/!(*.test).js';
-glob.sync(storesGlob, { cwd: __dirname }).map(requireAndSync);
+source.watch({
+  sourcePath: options.source.path,
+  destinationPath: options.destination.path,
+  destination
+});

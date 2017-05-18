@@ -1,16 +1,20 @@
-interface StoreModule {
+interface Store {
   type: StoreType;
-  sync(options: StoreOptions): void;
+  watch(options: WatchOptions): void;
+  read(path: string): Promise<string>;
+  write(path: string, content: string): Promise<void>;
+  delete(path: string): Promise<void>;
 }
 
-interface StoreOptions {
-  source: Store;
+type StoreType = 'firebase' | 'gcs' | 'local';
+
+interface WatchOptions {
+  sourcePath: string;
+  destinationPath: string;
   destination: Store;
 }
 
-interface Store {
+interface StoreOptions {
   type: StoreType;
   path: string;
 }
-
-type StoreType = 'local' | 'firebase' | 'gcs';

@@ -1,25 +1,17 @@
 import 'jest';
 
-const array: any = { map: jest.fn(() => array), filter: jest.fn(() => array) };
-const glob = { sync: jest.fn(() => array) };
-jest.mock('glob', () => glob);
+jest.mock('./stores/local', () => ({ store: { watch: jest.fn() } }));
+jest.mock('./stores/firebase', () => ({ store: { watch: jest.fn() } }));
 
-import { requireAndSync } from './index';
+import { store as localStore } from './stores/local';
+import { store as firebaseStore } from './stores/firebase';
 
-describe(`requireAndSync`, () => {
-  it(`should require a file, then call its sync method`, () => {
-    const file = { type: 'local', sync: jest.fn() };
-    jest.mock('./index.test', () => file);
+import './index';
 
-    requireAndSync('./index.test');
-    expect(file.sync).toHaveBeenLastCalledWith({
-      source: { type: 'local', path: './posts/*/content.md' },
-      destination: { type: 'firebase', path: 'postContent' }
-    });
+it(`should call store.watch`, () => {
+  expect(localStore.watch).toHaveBeenLastCalledWith({
+    sourcePath: 'posts/:postId/content.md',
+    destinationPath: 'postContent/:postId',
+    destination: firebaseStore
   });
-});
-
-it(`should call glob.sync`, () => {
-  expect(glob.sync).toHaveBeenLastCalledWith('./stores/!(*.test).js', { cwd: __dirname });
-  expect(glob.sync().map).toHaveBeenLastCalledWith(requireAndSync);
 });

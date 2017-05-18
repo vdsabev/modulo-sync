@@ -1,6 +1,13 @@
 import 'jest';
 
-import { first, last } from './array';
+import { map, first, last } from './array';
+
+describe(`map`, () => {
+  it(`should create a function`, () => {
+    const double = map((x: number) => x * 2);
+    expect(double([1, 2, 3])).toEqual([2, 4, 6]);
+  });
+});
 
 describe(`first`, () => {
   it(`should return first array item when multiple items`, () => {

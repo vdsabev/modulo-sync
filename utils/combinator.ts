@@ -2,7 +2,7 @@
 export const substitution = (f: Function) => (g: Function) => (...x: any[]) => f(...x)(g(...x));
 
 // K
-export const constant = <T>(value: T) => () => value;
+export const constant = <T>(x: T) => () => x;
 
 // I
 export const identity = <T>(x: T): T => x;
