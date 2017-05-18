@@ -13,7 +13,7 @@ const deleteFile = promisify(fs.unlink);
 export const store: Store = freeze({
   type: <StoreType>'local',
   read: (filePath: string) => readFile(filePath, 'utf8').catch(logger.error),
-  write: (filePath: string, content: string) => writeFile(filePath, 'utf8').catch(logger.error),
+  write: (filePath: string, content: string) => writeFile(filePath, content).catch(logger.error),
   delete: (filePath: string) => deleteFile(filePath).catch(logger.error),
   watch({ sourcePath, destinationPath, destination }: WatchOptions) {
     logger.log(`[${store.type.toUpperCase()}] ${sourcePath} -> ${destinationPath}`);
