@@ -91,9 +91,9 @@ describe(`partial`, () => {
 });
 
 describe(`promisify`, () => {
-  const asyncDiv = (a: number, b: number, next: Function) => {
-    if (!b) return next('Division by 0!');
-    next(null, a / b);
+  const asyncDiv = (a: number, b: number, callback: Function) => {
+    if (!b) return callback('Division by 0!');
+    callback(null, a / b);
   };
 
   it(`should return a function`, () => {

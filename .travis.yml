@@ -10,11 +10,6 @@ cache:
   directories:
     - node_modules
 
-env:
-  global:
-    - GCS_PROJECT_ID=mock
-    - GCS_BUCKET=mock
-
 script:
   - npm test
 

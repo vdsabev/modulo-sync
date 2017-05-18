@@ -13,11 +13,10 @@ const database = {
     catch: jest.fn()
   }))
 };
-const firebaseAdmin = {
+jest.mock('firebase-admin', () => ({
   initializeApp: () => ({ database: () => database }),
   credential: { cert: () => 'a' }
-};
-jest.mock('firebase-admin', () => firebaseAdmin);
+}));
 
 import * as path from 'path';
 jest.mock(path.resolve('private/firebase.json'), () => '', { virtual: true });

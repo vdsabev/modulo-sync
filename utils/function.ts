@@ -12,9 +12,9 @@ export const partial = (fn: Function, ...partialArgs: any[]) => (...otherArgs: a
 
 export const promisify = (fn: Function) => (...args: any[]) => new Promise(
   (resolve: Function, reject: Function) => {
-    fn(...args, (error: any, ...resultArgs: any[]) => {
+    fn(...args, (error: any, result: any) => {
       if (error) return reject(error);
-      resolve(...resultArgs);
+      resolve(result);
     });
   }
 );

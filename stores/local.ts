@@ -1,4 +1,4 @@
-import { watch } from 'chokidar';
+import { watch, FSWatcher } from 'chokidar';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -22,32 +22,33 @@ export const store: Store = freeze({
     const destinationPattern = pattern(destinationPath);
 
     const watcher = watch(sourcePattern.replace('*'), { persistent: true });
-    watcher.on('ready', () => {
-      watcher.on('error', partial(logger.error, '[ERROR]'));
-      watcher.on('add', writeToDestination(sourcePattern, destinationPattern, destination));
-      watcher.on('change', writeToDestination(sourcePattern, destinationPattern, destination));
-      watcher.on('unlink', deleteFromDestination(sourcePattern, destinationPattern, destination));
-    });
+    watcher.on('ready', watchFiles(watcher, sourcePattern, destinationPattern, destination));
   }
 });
 
-const writeToDestination = (sourcePattern: Pattern, destinationPattern: Pattern, destination: Store) => async (filePath: string) => {
+export const watchFiles = (watcher: FSWatcher, sourcePattern: Pattern, destinationPattern: Pattern, destination: Store) => () => {
+  watcher.on('error', partial(logger.error, '[ERROR]'));
+  watcher.on('add', writeToDestination(sourcePattern, destinationPattern, destination));
+  watcher.on('change', writeToDestination(sourcePattern, destinationPattern, destination));
+  watcher.on('unlink', deleteFromDestination(sourcePattern, destinationPattern, destination));
+};
+
+export const writeToDestination = (sourcePattern: Pattern, destinationPattern: Pattern, destination: Store) => (filePath: string) => {
   const sourcePath = normalizePath(filePath);
   const data = sourcePattern.extract(sourcePath);
   const destinationPath = destinationPattern.replace(data);
   logger.log(`[WRITE] ${sourcePath} -> ${destinationPath}`);
 
-  const content = await store.read(sourcePath);
-  await destination.write(destinationPath, content);
+  return store.read(sourcePath).then((content) => destination.write(destinationPath, content));
 };
 
-const deleteFromDestination = (sourcePattern: Pattern, destinationPattern: Pattern, destination: Store) => async (filePath: string) => {
+export const deleteFromDestination = (sourcePattern: Pattern, destinationPattern: Pattern, destination: Store) => (filePath: string) => {
   const sourcePath = normalizePath(filePath);
   const data = sourcePattern.extract(sourcePath);
   const destinationPath = destinationPattern.replace(data);
   logger.log(`[DELETE] ${sourcePath} -> ${destinationPath}`);
 
-  await destination.delete(destinationPath);
+  return destination.delete(destinationPath);
 };
 
-const normalizePath = (filePath: string) => filePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/');
+export const normalizePath = (filePath: string) => filePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/');

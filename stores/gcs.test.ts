@@ -3,6 +3,9 @@ import 'jest';
 import * as path from 'path';
 jest.mock('path', () => ({ ...path, sep: '/' }));
 
+const bucket = jest.fn();
+jest.mock('@google-cloud/storage', () => jest.fn(() => ({ bucket })));
+
 jest.mock('../logger', () => ({ logger: { log: jest.fn(), error: jest.fn() } }));
 import { logger } from '../logger';
 
