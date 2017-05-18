@@ -1,7 +1,5 @@
 import 'jest';
 
-import { last } from '../utils';
-
 import * as originalFs from 'fs';
 const fs = {
   ...originalFs,
@@ -11,9 +9,12 @@ const fs = {
 };
 jest.mock('fs', () => fs);
 
+import * as path from 'path';
+
 jest.mock('../logger', () => ({ logger: { log: jest.fn(), error: jest.fn() } }));
 import { logger } from '../logger';
 import { pattern } from '../parser';
+import { last } from '../utils';
 
 import { store, watchFiles, writeToDestination, deleteFromDestination, normalizePath } from './local';
 
@@ -97,6 +98,6 @@ describe(`normalizePath`, () => {
   });
 
   it(`should replace back slashes with forward slashes`, () => {
-    expect(normalizePath('a\\b\\c')).toBe('a/b/c');
+    expect(normalizePath(`a${path.sep}b${path.sep}c`)).toBe('a/b/c');
   });
 });
