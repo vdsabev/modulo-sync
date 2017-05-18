@@ -8,6 +8,7 @@ require('dotenv').config();
 import { parse } from './parser';
 
 const options = parse('local://posts/:postId/content.md,firebase://postContent/:postId');
+// const options = parse('local://posts/:postId/content.md,gcs://posts/:postId/content.md');
 
 const { store: source }: { store: Store } = require(`./stores/${options.source.type}`);
 const { store: destination }: { store: Store } = require(`./stores/${options.destination.type}`);
