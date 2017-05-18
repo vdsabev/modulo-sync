@@ -11,8 +11,9 @@ cache:
     - node_modules
 
 env:
-  - GCS_PROJECT_ID=mock
-  - GCS_BUCKET=mock
+  global:
+    - GCS_PROJECT_ID=mock
+    - GCS_BUCKET=mock
 
 script:
   - npm test
