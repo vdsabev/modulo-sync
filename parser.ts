@@ -17,13 +17,13 @@ export interface Pattern {
 export const pattern = (path: string, separator = '/'): Pattern => {
   const pathFragments = path.split(separator);
   const pathMatches = path.match(/:\w+/g) || [];
-  const isInMatches = cap(isContained(pathMatches));
+  const isInMatches = isContained(pathMatches);
 
   return {
     replace(data: string | Record<string, string>) {
       if (typeof data === 'string') return path.replace(/:\w+/g, data);
 
-      const getFragment = ternary(isInMatches, getDataByFragment(data), identity);
+      const getFragment = ternary(cap(isInMatches), getDataByFragment(data), identity);
       const replace = pipe(map(getFragment), join(separator));
       return replace(pathFragments);
     },
