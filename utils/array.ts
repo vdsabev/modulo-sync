@@ -1,10 +1,13 @@
 import { compose } from './combinator';
+import { invoke } from './invoke';
+import { partial } from './partial';
 import { get } from './object';
 
-// TODO: Write tests
-export const map = (fn: Function) => <T>(array: T[]) => array.map(<any>fn);
+export const filter = partial(invoke, 'filter');
+export const find = partial(invoke, 'find');
+export const map = partial(invoke, 'map');
+export const reduce = partial(invoke, 'reduce');
 
-// TODO: Write tests
 export const pluck = compose(map, get);
 
 export const first = <T = any>(array: T[] | null): T | undefined => array ? array[0] : undefined;
