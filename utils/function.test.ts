@@ -1,54 +1,33 @@
 import 'jest';
 
-import { left, right, invoke, sequence, partial, promisify } from './function';
+import { isContained } from './utils';
+import { cap, sequence, promisify } from './function';
 
-describe(`left`, () => {
-  it(`should call left function with rest arguments when value is true`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    left(l, r)(true, 'a', 'b');
-    expect(l).toHaveBeenLastCalledWith(true, 'a', 'b');
-    expect(r).not.toHaveBeenCalled();
+describe(`cap`, () => {
+  const isDigit = isContained([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+  it(`should set 1 argument by default`, () => {
+    const isDigitFirst = cap(isDigit);
+    expect(isDigitFirst(1, 2, 3)).toEqual(true);
+    expect(isDigitFirst(1, 2, 30)).toEqual(true);
+    expect(isDigitFirst(1, 20, 30)).toEqual(true);
+    expect(isDigitFirst(10, 20, 30)).toEqual(false);
   });
 
-  it(`should call right function with rest arguments when value is false`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    left(l, r)(false, 'a', 'b');
-    expect(l).not.toHaveBeenCalled();
-    expect(r).toHaveBeenLastCalledWith(false, 'a', 'b');
-  });
-});
-
-describe(`right`, () => {
-  it(`should call right function with rest arguments when value is true`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    right(l, r)(true, 'a', 'b');
-    expect(l).not.toHaveBeenCalled();
-    expect(r).toHaveBeenLastCalledWith(true, 'a', 'b');
+  it(`should allow setting 2 arguments`, () => {
+    const isDigitFirst2 = cap(isDigit, 2);
+    expect(isDigitFirst2(1, 2, 3)).toEqual(true);
+    expect(isDigitFirst2(1, 2, 30)).toEqual(true);
+    expect(isDigitFirst2(1, 20, 30)).toEqual(false);
+    expect(isDigitFirst2(10, 20, 30)).toEqual(false);
   });
 
-  it(`should call left function with rest arguments when value is false`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    right(l, r)(false, 'a', 'b');
-    expect(l).toHaveBeenLastCalledWith(false, 'a', 'b');
-    expect(r).not.toHaveBeenCalled();
-  });
-});
-
-describe(`invoke`, () => {
-  it(`should return a function`, () => {
-    expect(typeof invoke('a')).toBe('function');
-  });
-
-  it(`should invoke the function by name when called`, () => {
-    const pop = invoke('pop');
-    const array = [1, 2, 3];
-    expect(pop(array)).toBe(3);
-  });
-
-  it(`should invoke the function with multiple arguments`, () => {
-    const getWithoutFirstAndLast = invoke('slice', 1, -1);
-    const array = [1, 2, 3, 4, 5];
-    expect(getWithoutFirstAndLast(array)).toEqual([2, 3, 4]);
+  it(`should allow setting more than the total number of passed arguments`, () => {
+    const isDigitFirst10 = cap(isDigit, 10);
+    expect(isDigitFirst10(1, 2, 3)).toEqual(true);
+    expect(isDigitFirst10(1, 2, 30)).toEqual(false);
+    expect(isDigitFirst10(1, 20, 30)).toEqual(false);
+    expect(isDigitFirst10(10, 20, 30)).toEqual(false);
   });
 });
 
@@ -67,26 +46,6 @@ describe(`sequence`, () => {
 
   it(`should execute 3 functions and return last result`, () => {
     expect(sequence(double, tripple, quadrupple)(2)).toBe(8);
-  });
-});
-
-describe(`partial`, () => {
-  const add = (a: number, b = 0, c = 0) => a + b + c;
-  const append = (a: string, b = '', c = '') => a + b + c;
-
-  it(`should call the function with 1 partial argument`, () => {
-    const add1 = partial(add, 1);
-    expect(add1(2, 3)).toBe(6);
-  });
-
-  it(`should call the function with 2 partial arguments`, () => {
-    const add1And2 = partial(add, 1, 2);
-    expect(add1And2(3)).toBe(6);
-  });
-
-  it(`should call the function with 3 partial arguments`, () => {
-    const add1And2And3 = partial(add, 1, 2, 3);
-    expect(add1And2And3()).toBe(6);
   });
 });
 

@@ -1,4 +1,4 @@
-import { isContained } from './utils';
+import { pipe, map, join, identity, isContained, ternary, cap } from './utils';
 
 export const parse = (value: string): { source: StoreOptions, destination: StoreOptions } => {
   const [source, destination] = value.split(',').map((fullPath) => {
@@ -23,8 +23,9 @@ export const pattern = (path: string, separator = '/'): Pattern => {
     replace(data: string | Record<string, string>) {
       if (typeof data === 'string') return path.replace(/:\w+/g, data);
 
-      const getFragment = (fragment: string) => isInMatches(fragment) ? getDataByFragment(data, fragment) : fragment;
-      return pathFragments.map(getFragment).join(separator);
+      const getFragment = ternary(cap(isInMatches), getDataByFragment(data), identity);
+      const replace = pipe(map(getFragment), join(separator));
+      return replace(pathFragments);
     },
 
     extract(replacedPath: string) {
@@ -41,6 +42,6 @@ export const pattern = (path: string, separator = '/'): Pattern => {
   };
 };
 
-const getDataByFragment = (data: Record<string, string>, fragment: string) => data[fragment.replace(':', '')] || '';
+const getDataByFragment = (data: Record<string, string>) => (fragment: string) => data[fragment.replace(':', '')] || '';
 
 const normalizeFragment = (fragment: string) => fragment.replace(':', '');
