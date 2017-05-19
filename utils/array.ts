@@ -5,6 +5,7 @@ import { get } from './object';
 
 export const filter = partial(invoke, 'filter');
 export const find = partial(invoke, 'find');
+export const join = partial(invoke, 'join');
 export const map = partial(invoke, 'map');
 export const reduce = partial(invoke, 'reduce');
 

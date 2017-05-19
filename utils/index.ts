@@ -1,5 +1,6 @@
 export * from './array';
 export * from './combinator';
+export * from './flow';
 export * from './function';
 export * from './invoke';
 export * from './object';

@@ -1,36 +1,33 @@
 import 'jest';
 
-import { left, right, sequence, promisify } from './function';
+import { isContained } from './utils';
+import { cap, sequence, promisify } from './function';
 
-describe(`left`, () => {
-  it(`should call left function with rest arguments when value is true`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    left(l, r)(true, 'a', 'b');
-    expect(l).toHaveBeenLastCalledWith(true, 'a', 'b');
-    expect(r).not.toHaveBeenCalled();
+describe(`cap`, () => {
+  const isDigit = isContained([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+  it(`should set 1 argument by default`, () => {
+    const isDigitFirst = cap(isDigit);
+    expect(isDigitFirst(1, 2, 3)).toEqual(true);
+    expect(isDigitFirst(1, 2, 30)).toEqual(true);
+    expect(isDigitFirst(1, 20, 30)).toEqual(true);
+    expect(isDigitFirst(10, 20, 30)).toEqual(false);
   });
 
-  it(`should call right function with rest arguments when value is false`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    left(l, r)(false, 'a', 'b');
-    expect(l).not.toHaveBeenCalled();
-    expect(r).toHaveBeenLastCalledWith(false, 'a', 'b');
-  });
-});
-
-describe(`right`, () => {
-  it(`should call right function with rest arguments when value is true`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    right(l, r)(true, 'a', 'b');
-    expect(l).not.toHaveBeenCalled();
-    expect(r).toHaveBeenLastCalledWith(true, 'a', 'b');
+  it(`should allow setting 2 arguments`, () => {
+    const isDigitFirst2 = cap(isDigit, 2);
+    expect(isDigitFirst2(1, 2, 3)).toEqual(true);
+    expect(isDigitFirst2(1, 2, 30)).toEqual(true);
+    expect(isDigitFirst2(1, 20, 30)).toEqual(false);
+    expect(isDigitFirst2(10, 20, 30)).toEqual(false);
   });
 
-  it(`should call left function with rest arguments when value is false`, () => {
-    const l = jest.fn(); const r = jest.fn();
-    right(l, r)(false, 'a', 'b');
-    expect(l).toHaveBeenLastCalledWith(false, 'a', 'b');
-    expect(r).not.toHaveBeenCalled();
+  it(`should allow setting more than the total number of passed arguments`, () => {
+    const isDigitFirst10 = cap(isDigit, 10);
+    expect(isDigitFirst10(1, 2, 3)).toEqual(true);
+    expect(isDigitFirst10(1, 2, 30)).toEqual(false);
+    expect(isDigitFirst10(1, 20, 30)).toEqual(false);
+    expect(isDigitFirst10(10, 20, 30)).toEqual(false);
   });
 });
 
