@@ -2,7 +2,6 @@
 build
 coverage
 node_modules
-posts
 private
 
 .env

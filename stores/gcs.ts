@@ -1,11 +1,15 @@
 import * as path from 'path';
 import { Readable } from 'stream';
 
+import { config } from '../config';
 import { logger } from '../logger';
 import { freeze } from '../utils';
 
 const googleCloudStorage = require('@google-cloud/storage');
-const storage = googleCloudStorage({ projectId: process.env.GCS_PROJECT_ID, keyFilename: path.resolve('private/gcs.json') });
+const storage = googleCloudStorage({
+  projectId: process.env.GCS_PROJECT_ID,
+  keyFilename: path.resolve(process.cwd(), config.sync.keys.gcs || 'keys/gcs.json')
+});
 const bucket = storage.bucket(process.env.GCS_BUCKET);
 
 export const store: Store = freeze({

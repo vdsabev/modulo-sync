@@ -1,8 +1,11 @@
 {
   "private": true,
   "name": "modulo-sync",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "license": "MIT",
+  "bin": {
+    "modulo-sync": "./build/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "postinstall": "npm run build",
@@ -11,16 +14,16 @@
     "jest": "jest --watch"
   },
   "dependencies": {
-    "@google-cloud/storage": "1.1.0",
+    "@google-cloud/storage": "1.1.1",
     "@types/chokidar": "1.6.0",
     "@types/glob": "5.0.30",
     "@types/jest": "19.2.3",
     "chokidar": "1.7.0",
     "dotenv": "4.0.0",
-    "firebase-admin": "4.2.1",
+    "firebase-admin": "5.0.0",
     "glob": "7.1.1",
-    "jest": "20.0.1",
-    "ts-jest": "20.0.3",
+    "jest": "20.0.3",
+    "ts-jest": "20.0.4",
     "typescript": "2.3.2"
   },
   "jest": {
@@ -39,6 +42,18 @@
     "testRegex": "(/__tests__/.*|\\.test)\\.(ts|tsx)$",
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    }
+  },
+  "modulo": {
+    "//": "Example configuration for synchronizing a local folder to a remote firebase database",
+    "sync": {
+      "keys": {
+        "firebase": "./posts/firebase.json",
+        "gcs": "./posts/gcs.json"
+      },
+      "stores": [
+        { "from": "local://posts/:postId/content.md", "to": "firebase://postContent/:postId" }
+      ]
     }
   }
 }

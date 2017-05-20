@@ -1,10 +1,11 @@
 import * as path from 'path';
 
+import { config } from '../config';
 import { logger } from '../logger';
 import { freeze } from '../utils';
 
 const firebaseAdmin = require('firebase-admin');
-const firebaseKey = require(path.resolve('private/firebase.json'));
+const firebaseKey = require(path.resolve(process.cwd(), config.sync.keys.firebase || 'keys/firebase.json'));
 
 const firebase = firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(firebaseKey),
