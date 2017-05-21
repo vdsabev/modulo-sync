@@ -4,6 +4,7 @@ const watcher: any = { on: jest.fn(() => watcher) };
 const watch = jest.fn(() => watcher);
 jest.mock('chokidar', () => ({ watch }));
 
+import { config } from '../config';
 import { constant } from '../utils';
 
 const database = {
@@ -19,7 +20,7 @@ jest.mock('firebase-admin', () => ({
 }));
 
 import * as path from 'path';
-jest.mock(path.resolve('private/firebase.json'), () => '', { virtual: true });
+jest.mock(path.resolve(process.cwd(), config.sync.keys.firebase), () => '', { virtual: true });
 
 jest.mock('../logger', () => ({ logger: { log: jest.fn(), error: jest.fn() } }));
 import { logger } from '../logger';
