@@ -1,7 +1,12 @@
-import { compose } from './combinator';
+import { identity, compose } from './combinator';
+import { ternary } from './flow';
 import { invoke } from './invoke';
 import { partial } from './partial';
 import { get } from './object';
+
+export const isArray = Array.isArray;
+export const createArray = (...x: any[]) => x;
+export const arrayize = ternary(isArray, identity, createArray);
 
 export const filter = partial(invoke, 'filter');
 export const find = partial(invoke, 'find');

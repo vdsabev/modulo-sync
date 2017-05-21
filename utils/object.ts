@@ -6,3 +6,7 @@ export const values = (obj: any): any[] => keys(obj).map((key) => obj[key]);
 
 export const freeze = Object.freeze;
 export const seal = Object.seal;
+
+export const setDefault = <T extends {}>(obj: T, value: any) => (key: keyof T) => {
+  if (obj[key] == null) obj[key] = value;
+};

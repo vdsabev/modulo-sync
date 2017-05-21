@@ -1,6 +1,6 @@
 import 'jest';
 
-import { get, set, keys, values } from './object';
+import { get, set, keys, values, setDefault } from './object';
 
 describe(`get`, () => {
   it(`should create a function that gets property`, () => {
@@ -30,5 +30,23 @@ describe(`keys`, () => {
 describe(`values`, () => {
   it(`should return object values`, () => {
     expect(values({ a: 1, b: 2, c: 3 })).toEqual([1, 2, 3]);
+  });
+});
+
+describe(`setDefault`, () => {
+  it(`should not change object value if defined`, () => {
+    const oldValue = { a: 1 };
+    const obj = { value: oldValue };
+    const newValue = { b: 2 };
+    setDefault(obj, newValue)('value');
+    expect(obj.value).toBe(oldValue);
+  });
+
+  it(`should change object value if null`, () => {
+    const oldValue = null;
+    const obj = { value: oldValue };
+    const newValue = { b: 2 };
+    setDefault(obj, newValue)('value');
+    expect(obj.value).toBe(newValue);
   });
 });

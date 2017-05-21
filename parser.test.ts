@@ -3,15 +3,15 @@ import 'jest';
 import { parse, pattern } from './parser';
 
 describe(`parse`, () => {
-  it(`should parse local store options from string`, () => {
-    expect(parse('local://posts/:postId/content.md')).toEqual({ type: 'local', path: 'posts/:postId/content.md' });
+  it(`should parse file plugin options from string`, () => {
+    expect(parse('file://posts/:postId/content.md')).toEqual({ type: 'file', path: 'posts/:postId/content.md' });
   });
 
-  it(`should parse firebase store options from string`, () => {
+  it(`should parse firebase plugin options from string`, () => {
     expect(parse('firebase://postContent/:postId')).toEqual({ type: 'firebase', path: 'postContent/:postId' });
   });
 
-  it(`should parse gcs store options from string`, () => {
+  it(`should parse gcs plugin options from string`, () => {
     expect(parse('gcs://posts/:postId')).toEqual({ type: 'gcs', path: 'posts/:postId' });
   });
 });

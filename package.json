@@ -18,11 +18,12 @@
     "@types/chokidar": "1.6.0",
     "@types/glob": "5.0.30",
     "@types/jest": "19.2.3",
+    "@types/js-yaml": "3.5.30",
     "chokidar": "1.7.0",
-    "dotenv": "4.0.0",
     "firebase-admin": "5.0.0",
     "glob": "7.1.1",
     "jest": "20.0.3",
+    "js-yaml": "3.8.4",
     "ts-jest": "20.0.4",
     "typescript": "2.3.2"
   },
@@ -42,18 +43,6 @@
     "testRegex": "(/__tests__/.*|\\.test)\\.(ts|tsx)$",
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    }
-  },
-  "modulo": {
-    "//": "Example configuration for synchronizing a local folder to a remote firebase database",
-    "sync": {
-      "keys": {
-        "firebase": "./posts/firebase.json",
-        "gcs": "./posts/gcs.json"
-      },
-      "stores": [
-        { "from": "local://posts/:postId/content.md", "to": "firebase://postContent/:postId" }
-      ]
     }
   }
 }

@@ -1,17 +1,17 @@
 import 'jest';
 
-jest.mock('./stores/local', () => ({ store: { watch: jest.fn() } }));
-jest.mock('./stores/firebase', () => ({ store: { watch: jest.fn() } }));
+jest.mock('./plugins/file', () => ({ plugin: { watch: jest.fn() } }));
+jest.mock('./plugins/firebase', () => ({ plugin: { watch: jest.fn() } }));
 
-import { store as localStore } from './stores/local';
-import { store as firebaseStore } from './stores/firebase';
+import { plugin as filePlugin } from './plugins/file';
+import { plugin as firebasePlugin } from './plugins/firebase';
 
 import './index';
 
-it(`should call store.watch`, () => {
-  expect(localStore.watch).toHaveBeenLastCalledWith({
+it(`should call plugin.watch`, () => {
+  expect(filePlugin.watch).toHaveBeenLastCalledWith({
     sourcePath: 'posts/:postId/content.md',
     destinationPath: 'postContent/:postId',
-    destination: firebaseStore
+    destination: firebasePlugin
   });
 });

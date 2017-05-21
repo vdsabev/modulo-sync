@@ -5,17 +5,17 @@ import { logger } from '../logger';
 import { freeze } from '../utils';
 
 const firebaseAdmin = require('firebase-admin');
-const firebaseKey = require(path.resolve(process.cwd(), config.sync.keys.firebase || 'keys/firebase.json'));
+const firebaseKey = require(path.resolve(process.cwd(), config.plugins.firebase.keyFilename || 'keys/firebase.json'));
 
 const firebase = firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(firebaseKey),
-  databaseURL: process.env.FIREBASE_DATABASE_URL
+  databaseURL: config.plugins.firebase.databaseURL
 });
 
 const database = firebase.database();
 
-export const store: Store = freeze({
-  type: <StoreType>'firebase',
+export const plugin: ModuloPlugin = freeze({
+  type: <ModuloPluginType>'firebase',
   read: (sourcePath: string) => database.ref(sourcePath).catch(logger.error),
   write: (destinationPath: string, content: string) => database.ref(destinationPath).set(content).catch(logger.error),
   delete: (path: string) => database.ref(path).remove().catch(logger.error),

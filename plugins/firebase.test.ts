@@ -20,16 +20,16 @@ jest.mock('firebase-admin', () => ({
 }));
 
 import * as path from 'path';
-jest.mock(path.resolve(process.cwd(), config.sync.keys.firebase), () => '', { virtual: true });
+jest.mock(path.resolve(process.cwd(), config.plugins.firebase.keyFilename), () => '', { virtual: true });
 
 jest.mock('../logger', () => ({ logger: { log: jest.fn(), error: jest.fn() } }));
 import { logger } from '../logger';
 
-import { store } from './firebase';
+import { plugin } from './firebase';
 
 describe(`read`, () => {
   it(`should read reference`, () => {
-    store.read('a/b/c');
+    plugin.read('a/b/c');
     expect(database.ref).toHaveBeenLastCalledWith('a/b/c');
     expect(database.ref().catch).toHaveBeenLastCalledWith(logger.error);
   });
@@ -37,7 +37,7 @@ describe(`read`, () => {
 
 describe(`write`, () => {
   it(`should call database API methods`, () => {
-    store.write('a/b/c', 'content');
+    plugin.write('a/b/c', 'content');
     expect(database.ref).toHaveBeenLastCalledWith('a/b/c');
     expect(database.ref().set).toHaveBeenLastCalledWith('content');
     expect(database.ref().set().catch).toHaveBeenLastCalledWith(logger.error);
@@ -46,7 +46,7 @@ describe(`write`, () => {
 
 describe(`delete`, () => {
   it(`should call database API methods`, () => {
-    store.delete('a/b/c');
+    plugin.delete('a/b/c');
     expect(database.ref).toHaveBeenLastCalledWith('a/b/c');
     expect(database.ref().remove).toHaveBeenCalled();
     expect(database.ref().remove().catch).toHaveBeenLastCalledWith(logger.error);
@@ -55,9 +55,9 @@ describe(`delete`, () => {
 
 describe(`watch`, () => {
   it(`should log action`, () => {
-    if (!store.watch) throw new Error('Invalid store watch function!');
+    if (!plugin.watch) throw new Error('Invalid plugin watch function!');
 
-    store.watch({ sourcePath: 'a', destinationPath: 'b', destination: store });
+    plugin.watch({ sourcePath: 'a', destinationPath: 'b', destination: plugin });
     expect(logger.log).toHaveBeenLastCalledWith('[FIREBASE] a -> b');
   });
 });

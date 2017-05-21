@@ -1,25 +1,31 @@
-require('dotenv').config();
-
-import { config } from './config';
+import { config, ConfigEvent } from './config';
 import { parse } from './parser';
+import { arrayize, keys } from './utils';
 
 // TODO: Refactor
-const syncStore = ({ from, to }: { from: string, to: string }) => {
-  const options = { source: parse(from), destination: parse(to) };
+const syncPlugin = (event: ConfigEvent) => {
+  keys(event.for).map((sourceType: ModuloPluginType) => {
+    // TODO: Handle require exceptions
+    const { plugin: source }: { plugin: ModuloPlugin } = require(`./plugins/${sourceType}`);
 
-  // TODO: Handle require exceptions
-  const { store: source }: { store: Store } = require(`./stores/${options.source.type}`);
-  const { store: destination }: { store: Store } = require(`./stores/${options.destination.type}`);
+    // TODO: Handle case where there's no watch function for the plugin
+    if (!source.watch) return;
 
-  // TODO: Handle case where there's no watch function for the store
-  if (!source.watch) return;
-
-  source.watch({
-    sourcePath: options.source.path,
-    destinationPath: options.destination.path,
-    destination
+    const sourcePaths: string[] = arrayize(event.for[sourceType]);
+    sourcePaths.map((sourcePath) => {
+      keys(event.do).map((destinationType: ModuloPluginType) => {
+        // TODO: Handle require exceptions
+        const { plugin: destination }: { plugin: ModuloPlugin } = require(`./plugins/${destinationType}`);
+        const destinationPaths: string[] = arrayize(event.do[destinationType]);
+        destinationPaths.map((destinationPath) => {
+          // TODO: Handle case where there's no watch function for the plugin
+          if (!source.watch) return;
+          source.watch({ sourcePath, destinationPath, destination });
+        });
+      });
+    });
   });
 };
 
-// TODO: If no stores found in config, log a warning message before exiting
-config.sync.stores.map(syncStore);
+// TODO: If no plugins found in config, log a warning message before exiting
+config.events.map(syncPlugin);

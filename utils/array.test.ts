@@ -1,6 +1,23 @@
 import 'jest';
 
-import { map, first, last } from './array';
+import { createArray, arrayize, map, first, last } from './array';
+
+describe(`createArray`, () => {
+  it(`should return an array`, () => {
+    expect(createArray(1, 2, 3)).toEqual([1, 2, 3]);
+  });
+});
+
+describe(`arrayize`, () => {
+  it(`should wrap value in an array`, () => {
+    expect(arrayize(1)).toEqual([1]);
+  });
+
+  it(`should not wrap value if already an array`, () => {
+    const array = [1];
+    expect(arrayize(array)).toBe(array);
+  });
+});
 
 describe(`map`, () => {
   it(`should create a function`, () => {

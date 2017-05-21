@@ -1,8 +1,8 @@
 import { pipe, map, join, identity, isContained, ternary, cap } from './utils';
 
-export const parse = (fullPath: string): { type: StoreType, path: string } => {
+export const parse = (fullPath: string): { type: ModuloPluginType, path: string } => {
   const [type, path] = fullPath.split('://');
-  return { type: <StoreType>type, path };
+  return { type: <ModuloPluginType>type, path };
 };
 
 export interface Pattern {
