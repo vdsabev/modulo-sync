@@ -54,6 +54,8 @@ describe(`delete`, () => {
 
 describe(`watch`, () => {
   it(`should log action`, () => {
+    if (!store.watch) throw new Error('Invalid store watch function!');
+
     store.watch({ sourcePath: 'a', destinationPath: 'b', destination: store });
     expect(logger.log).toHaveBeenLastCalledWith('[FIREBASE] a -> b');
   });
