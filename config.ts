@@ -5,7 +5,7 @@ import * as yaml from 'js-yaml';
 
 import { pipe, match, last, setDefault } from './utils';
 
-interface Config {
+export interface Config {
   plugins: Record<ModuloPluginType, Record<string, string>>;
   events: ConfigEvent[];
 }
@@ -15,7 +15,7 @@ export interface ConfigEvent {
   do: ConfigPluginRecord;
 }
 
-type ConfigPluginRecord = Record<ModuloPluginType, string | string[]>;
+export type ConfigPluginRecord = Record<ModuloPluginType, string | string[]>;
 
 // TODO: Handle readFileSync exception
 // TODO: Handle null references

@@ -3,7 +3,7 @@ export interface Logger extends LoggerOutput {
   maybeError(e: any): void;
 }
 
-interface LoggerOutput {
+export interface LoggerOutput {
   log(...args: any[]): void;
   error(...args: any[]): void;
 }
