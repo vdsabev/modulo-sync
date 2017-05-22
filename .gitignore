@@ -2,7 +2,5 @@
 build
 coverage
 node_modules
-private
 
-.env
 *.log
