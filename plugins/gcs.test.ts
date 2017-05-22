@@ -25,11 +25,11 @@ jest.mock('@google-cloud/storage', () => jest.fn(constant({ bucket: constant({ f
 jest.mock('../logger', () => ({ logger: { log: jest.fn(), error: jest.fn() } }));
 import { logger } from '../logger';
 
-import { store } from './gcs';
+import { plugin } from './gcs';
 
 describe(`read`, () => {
   it(`should read reference`, () => {
-    store.read('read');
+    plugin.read('read');
     expect(file).toHaveBeenLastCalledWith('read');
     expect(file().download).toHaveBeenCalled();
     expect(file().catch).toHaveBeenLastCalledWith(logger.error);
@@ -38,7 +38,7 @@ describe(`read`, () => {
 
 describe(`write`, () => {
   it(`should create read stream and call bucket API methods`, () => {
-    store.write('write', 'content');
+    plugin.write('write', 'content');
     expect(file).toHaveBeenLastCalledWith('write');
     expect(file().createWriteStream).toHaveBeenCalled();
     expect(Readable).toHaveBeenCalled();
@@ -47,7 +47,7 @@ describe(`write`, () => {
 
 describe(`delete`, () => {
   it(`should call bucket API methods`, () => {
-    store.delete('delete');
+    plugin.delete('delete');
     expect(file).toHaveBeenLastCalledWith('delete');
     expect(file().delete).toHaveBeenCalled();
     expect(file().catch).toHaveBeenLastCalledWith(logger.error);
@@ -56,7 +56,9 @@ describe(`delete`, () => {
 
 describe(`watch`, () => {
   it(`should log action`, () => {
-    store.watch({ sourcePath: 'a', destinationPath: 'b', destination: store });
+    if (!plugin.watch) throw new Error('Invalid plugin watch function!');
+
+    plugin.watch({ sourcePath: 'a', destinationPath: 'b', destination: plugin });
     expect(logger.log).toHaveBeenLastCalledWith('[GCS] a -> b');
   });
 });

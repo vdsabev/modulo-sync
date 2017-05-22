@@ -1,15 +1,19 @@
 import * as path from 'path';
 import { Readable } from 'stream';
 
+import { config } from '../config';
 import { logger } from '../logger';
 import { freeze } from '../utils';
 
 const googleCloudStorage = require('@google-cloud/storage');
-const storage = googleCloudStorage({ projectId: process.env.GCS_PROJECT_ID, keyFilename: path.resolve('private/gcs.json') });
-const bucket = storage.bucket(process.env.GCS_BUCKET);
+const storage = googleCloudStorage({
+  projectId: process.env.GCS_PROJECT_ID,
+  keyFilename: path.resolve(process.cwd(), config.plugins.gcs.keyFilename || 'keys/gcs.json')
+});
+const bucket = storage.bucket(config.plugins.gcs.bucket);
 
-export const store: Store = freeze({
-  type: <StoreType>'gcs',
+export const plugin: ModuloPlugin = freeze({
+  type: <ModuloPluginType>'gcs',
   read: (sourcePath: string) => bucket.file(sourcePath).download().catch(logger.error),
   write: (destinationPath: string, content: string) => new Promise<void>((resolve, reject) => {
     const writeStream = bucket.file(destinationPath).createWriteStream();

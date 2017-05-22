@@ -1,20 +1,31 @@
-require('dotenv').config();
-
-// TODO: Improve CLI options
-// TODO: Store upload tasks and cancel them if a new one starts at the same path before the previous one has finished
-// TODO: Add option for full initial upload
-// TODO: Add option for full initial download
-
+import { config, ConfigEvent } from './config';
 import { parse } from './parser';
+import { arrayize, keys } from './utils';
 
-const options = parse('local://posts/:postId/content.md,firebase://postContent/:postId');
-// const options = parse('local://posts/:postId/content.md,gcs://posts/:postId/content.md');
+// TODO: Refactor
+const syncPlugin = (event: ConfigEvent) => {
+  keys(event.for).map((sourceType: ModuloPluginType) => {
+    // TODO: Handle require exceptions
+    const { plugin: source }: { plugin: ModuloPlugin } = require(`./plugins/${sourceType}`);
 
-const { store: source }: { store: Store } = require(`./stores/${options.source.type}`);
-const { store: destination }: { store: Store } = require(`./stores/${options.destination.type}`);
+    // TODO: Handle case where there's no watch function for the plugin
+    if (!source.watch) return;
 
-source.watch({
-  sourcePath: options.source.path,
-  destinationPath: options.destination.path,
-  destination
-});
+    const sourcePaths: string[] = arrayize(event.for[sourceType]);
+    sourcePaths.map((sourcePath) => {
+      keys(event.do).map((destinationType: ModuloPluginType) => {
+        // TODO: Handle require exceptions
+        const { plugin: destination }: { plugin: ModuloPlugin } = require(`./plugins/${destinationType}`);
+        const destinationPaths: string[] = arrayize(event.do[destinationType]);
+        destinationPaths.map((destinationPath) => {
+          // TODO: Handle case where there's no watch function for the plugin
+          if (!source.watch) return;
+          source.watch({ sourcePath, destinationPath, destination });
+        });
+      });
+    });
+  });
+};
+
+// TODO: If no plugins found in config, log a warning message before exiting
+config.events.map(syncPlugin);

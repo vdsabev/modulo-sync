@@ -6,4 +6,5 @@ export * from './invoke';
 export * from './object';
 export * from './partial';
 export * from './placeholder';
+export * from './string';
 export * from './utils';

@@ -16,57 +16,59 @@ import { logger } from '../logger';
 import { pattern } from '../parser';
 import { last } from '../utils';
 
-import { store, watchFiles, writeToDestination, deleteFromDestination, normalizePath } from './local';
+import { plugin, watchFiles, writeToDestination, deleteFromDestination, normalizePath } from './file';
 
 describe(`read`, () => {
   it(`should read file`, async () => {
-    await store.read('a/b/c');
+    await plugin.read('a/b/c');
     expect(last<any>(fs.readFile.mock.calls)[0]).toBe('a/b/c');
     expect(last<any>(fs.readFile.mock.calls)[1]).toBe('utf8');
   });
 
   it(`should handle error`, async () => {
-    await store.read('error');
+    await plugin.read('error');
     expect(logger.error).toHaveBeenLastCalledWith('error');
   });
 });
 
 describe(`write`, () => {
   it(`should write file`, async () => {
-    await store.write('a/b/c', 'xyz');
+    await plugin.write('a/b/c', 'xyz');
     expect(last<any>(fs.writeFile.mock.calls)[0]).toBe('a/b/c');
     expect(last<any>(fs.writeFile.mock.calls)[1]).toBe('xyz');
   });
 
   it(`should handle error`, async () => {
-    await store.write('error', 'xyz');
+    await plugin.write('error', 'xyz');
     expect(logger.error).toHaveBeenLastCalledWith('error');
   });
 });
 
 describe(`delete`, () => {
   it(`should delete file`, async () => {
-    await store.delete('a/b/c');
+    await plugin.delete('a/b/c');
     expect(last<any>(fs.unlink.mock.calls)[0]).toBe('a/b/c');
   });
 
   it(`should handle error`, async () => {
-    await store.delete('error');
+    await plugin.delete('error');
     expect(logger.error).toHaveBeenLastCalledWith('error');
   });
 });
 
 describe(`watch`, () => {
   it(`should log action`, () => {
-    store.watch({ sourcePath: 'a', destinationPath: 'b', destination: store });
-    expect(logger.log).toHaveBeenLastCalledWith('[LOCAL] a -> b');
+    if (!plugin.watch) throw new Error('Invalid plugin watch function!');
+
+    plugin.watch({ sourcePath: 'a', destinationPath: 'b', destination: plugin });
+    expect(logger.log).toHaveBeenLastCalledWith('[FILE] a -> b');
   });
 });
 
 describe(`watchFiles`, () =>  {
   it(`should register watcher events`, () => {
     const watcher = { on: jest.fn() };
-    watchFiles(<any>watcher, pattern(''), pattern(''), store)();
+    watchFiles(<any>watcher, pattern(''), pattern(''), plugin)();
     expect(watcher.on.mock.calls[0][0]).toBe('error');
     expect(watcher.on.mock.calls[1][0]).toBe('add');
     expect(watcher.on.mock.calls[2][0]).toBe('change');
@@ -76,7 +78,7 @@ describe(`watchFiles`, () =>  {
 
 describe(`writeToDestination`, () => {
   it(`should log action, read from source, then write to destination`, async () => {
-    await writeToDestination(pattern('a/:id'), pattern('b/:id'), store)('a/1');
+    await writeToDestination(pattern('a/:id'), pattern('b/:id'), plugin)('a/1');
     expect(logger.log).toHaveBeenLastCalledWith('[WRITE] a/1 -> b/1');
     expect(last<any>(fs.readFile.mock.calls)[0]).toBe('a/1');
     expect(last<any>(fs.writeFile.mock.calls)[0]).toBe('b/1');
@@ -86,7 +88,7 @@ describe(`writeToDestination`, () => {
 
 describe(`deleteFromDestination`, () => {
   it(`should log action, then delete from destination`, async () => {
-    await deleteFromDestination(pattern('a/:id'), pattern('b/:id'), store)('a/1');
+    await deleteFromDestination(pattern('a/:id'), pattern('b/:id'), plugin)('a/1');
     expect(logger.log).toHaveBeenLastCalledWith('[DELETE] a/1 -> b/1');
     expect(last<any>(fs.unlink.mock.calls)[0]).toBe('b/1');
   });

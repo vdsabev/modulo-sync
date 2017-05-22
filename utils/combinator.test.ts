@@ -41,6 +41,21 @@ describe(`identity`, () => {
   });
 });
 
+describe(`pipe`, () => {
+  const add1 = (value: number) => value + 1;
+  const multiplyBy2 = (value: number) => value * 2;
+
+  it(`should call left function, then right function`, () => {
+    const result = pipe(add1, multiplyBy2)(0);
+    expect(result).toBe(2);
+  });
+
+  it(`should call left function, then right function`, () => {
+    const result = pipe(add1, multiplyBy2, add1, multiplyBy2)(0);
+    expect(result).toBe(6);
+  });
+});
+
 describe(`compose`, () => {
   const add1 = (value: number) => value + 1;
   const multiplyBy2 = (value: number) => value * 2;
@@ -49,15 +64,10 @@ describe(`compose`, () => {
     const result = compose(add1, multiplyBy2)(0);
     expect(result).toBe(1);
   });
-});
 
-describe(`pipe`, () => {
-  const add1 = (value: number) => value + 1;
-  const multiplyBy2 = (value: number) => value * 2;
-
-  it(`should call left function, then right function`, () => {
-    const result = pipe(add1, multiplyBy2)(0);
-    expect(result).toBe(2);
+  it(`should compose more than 2 functions`, () => {
+    const result = compose(add1, multiplyBy2, add1, multiplyBy2)(0);
+    expect(result).toBe(3);
   });
 });
 
