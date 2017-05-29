@@ -5,7 +5,8 @@ plugins:
     databaseURL: https://modulo-one.firebaseio.com
 
 events:
-  - for:
-      file: posts/:postId/content.md
-    do:
-      firebase: postContent/:postId
+  - on file [add, change]: posts/:postId/content.md
+    do file [writeFile]: posts/:postId/content-copy.md
+
+  - on file [unlink]: posts/:postId/content.md
+    do file [unlink]: posts/:postId/content-copy.md

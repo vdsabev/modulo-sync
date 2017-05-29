@@ -1,18 +1,30 @@
 import 'jest';
 
-import { parse, pattern } from './parser';
+import { parseEventDefinition, pattern } from './parser';
 
-describe(`parse`, () => {
-  it(`should parse file plugin options from string`, () => {
-    expect(parse('file://posts/:postId/content.md')).toEqual({ type: 'file', path: 'posts/:postId/content.md' });
+describe(`parseEventDefinition`, () => {
+  it(`should parse event with plugin and params`, () => {
+    expect(parseEventDefinition('on file [add, change]')).toEqual({
+      type: 'event',
+      plugin: 'file',
+      params: ['add', 'change']
+    });
   });
 
-  it(`should parse firebase plugin options from string`, () => {
-    expect(parse('firebase://postContent/:postId')).toEqual({ type: 'firebase', path: 'postContent/:postId' });
+  it(`should ignore square and round brackets`, () => {
+    expect(parseEventDefinition('on file add, change')).toEqual({
+      type: 'event',
+      plugin: 'file',
+      params: ['add', 'change']
+    });
   });
 
-  it(`should parse gcs plugin options from string`, () => {
-    expect(parse('gcs://posts/:postId')).toEqual({ type: 'gcs', path: 'posts/:postId' });
+  it(`should parse action with plugin and params`, () => {
+    expect(parseEventDefinition('do firebase (set)')).toEqual({
+      type: 'action',
+      plugin: 'firebase',
+      params: ['set']
+    });
   });
 });
 

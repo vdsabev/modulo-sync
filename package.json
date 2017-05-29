@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "modulo-sync",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "MIT",
   "bin": {
     "modulo-sync": "./build/index.js"
@@ -20,12 +20,13 @@
     "@types/js-yaml": "3.5.30",
     "chokidar": "1.7.0",
     "firebase-admin": "5.0.0",
-    "glob": "7.1.1",
-    "jest": "20.0.3",
+    "glob": "7.1.2",
+    "jest": "20.0.4",
     "js-yaml": "3.8.4",
+    "npm-run": "4.1.2",
     "rimraf": "2.6.1",
     "ts-jest": "20.0.4",
-    "typescript": "2.3.2"
+    "typescript": "2.3.3"
   },
   "jest": {
     "collectCoverage": true,
