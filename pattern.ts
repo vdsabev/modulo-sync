@@ -1,34 +1,4 @@
-// TODO: Rename file & test to `pattern`
 import { pipe, map, join, identity, isContained, ternary, cap } from './utils';
-
-// TODO: Move to config
-// Parse event
-export interface EventSettings {
-  type: EventType;
-  plugin: string;
-  params: string[];
-}
-
-export type EventType = 'event' | 'action';
-
-export const parseEventDefinition = (definition: string): EventSettings => {
-  const [type, plugin, ...params] = definition.split(/\s+/);
-  return {
-    type: getEventType(type),
-    plugin,
-    params: getEventParams(params.join(''))
-  };
-};
-
-const getEventType = (type: string): EventType => {
-  switch (type) {
-    case 'on': return 'event';
-    case 'do': return 'action';
-    default: throw new Error(`Invalid event type: ${type}`);
-  }
-};
-
-const getEventParams = (params: string): string[] => params.replace(/[\[\]\(\)]/g, '').split(',');
 
 // Pattern
 export interface Pattern {

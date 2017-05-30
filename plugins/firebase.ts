@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import { config } from '../config';
 import { logger } from '../logger';
-import { pattern, Pattern } from '../parser';
+import { pattern, Pattern } from '../pattern';
 import { freeze } from '../utils';
 
 const firebaseAdmin = require('firebase-admin');

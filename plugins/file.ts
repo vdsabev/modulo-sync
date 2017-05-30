@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { logger } from '../logger';
-import { Pattern } from '../parser';
+import { Pattern } from '../pattern';
 import { promisify, freeze, partial } from '../utils';
 
 const readFile = promisify(fs.readFile);

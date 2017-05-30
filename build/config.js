@@ -5,6 +5,22 @@ const glob = require("glob");
 const path = require("path");
 const yaml = require("js-yaml");
 const utils_1 = require("./utils");
+exports.parseEventDefinition = (definition) => {
+    const [type, plugin, ...params] = definition.split(/\s+/);
+    return {
+        type: getEventType(type),
+        plugin,
+        params: getEventParams(params.join(''))
+    };
+};
+const getEventType = (type) => {
+    switch (type) {
+        case 'on': return 'event';
+        case 'do': return 'action';
+        default: throw new Error(`Invalid event type: ${type}`);
+    }
+};
+const getEventParams = (params) => params.replace(/[\[\]\(\)]/g, '').split(',');
 // TODO: Handle readFileSync exception
 // TODO: Handle null references
 // TODO: Validate config

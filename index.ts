@@ -1,6 +1,6 @@
-import { config, ConfigEvent } from './config';
+import { parseEventDefinition, config, ConfigEvent } from './config';
 import { logger } from './logger';
-import { parseEventDefinition, pattern, Pattern } from './parser';
+import { pattern, Pattern } from './pattern';
 import { keys } from './utils';
 
 // TODO: If no plugins found in config, log a warning message before exiting
