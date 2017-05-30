@@ -1,2 +1,4 @@
 "use strict";
-// TODO: Write tests
+Object.defineProperty(exports, "__esModule", { value: true });
+require("jest");
+it(`TODO`);

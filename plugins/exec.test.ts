@@ -1,1 +1,3 @@
-// TODO: Write tests
+import 'jest';
+
+it(`TODO`);

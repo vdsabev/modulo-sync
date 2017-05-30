@@ -1,4 +1,6 @@
-// import 'jest';
+import 'jest';
+
+it(`TODO`);
 
 // import * as path from 'path';
 // jest.mock('path', () => ({ ...path, sep: '/' }));

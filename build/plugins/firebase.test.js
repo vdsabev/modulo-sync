@@ -1,5 +1,7 @@
 "use strict";
-// import 'jest';
+Object.defineProperty(exports, "__esModule", { value: true });
+require("jest");
+it(`TODO`);
 // const watcher: any = { on: jest.fn(() => watcher) };
 // const watch = jest.fn(() => watcher);
 // jest.mock('chokidar', () => ({ watch }));

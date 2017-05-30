@@ -1,5 +1,7 @@
 "use strict";
-// import 'jest';
+Object.defineProperty(exports, "__esModule", { value: true });
+require("jest");
+it(`TODO`);
 // import * as path from 'path';
 // jest.mock('path', () => ({ ...path, sep: '/' }));
 // import { constant } from '../utils';
