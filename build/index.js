@@ -4,7 +4,7 @@ const config_1 = require("./config");
 const logger_1 = require("./logger");
 const pattern_1 = require("./pattern");
 const utils_1 = require("./utils");
-// TODO: If no plugins found in config, log a warning message before exiting
+// TODO: If no events found in config, log a warning message before exiting
 // TODO: Support path arrays
 config_1.config.events.map((configEvent) => {
     const settings = [];

@@ -3,7 +3,7 @@ import { logger } from './logger';
 import { pattern, Pattern } from './pattern';
 import { keys } from './utils';
 
-// TODO: If no plugins found in config, log a warning message before exiting
+// TODO: If no events found in config, log a warning message before exiting
 // TODO: Support path arrays
 config.events.map((configEvent) => {
   const settings: any[] = [];
