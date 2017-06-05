@@ -4,10 +4,10 @@ const path = require("path");
 const config_1 = require("../config");
 const utils_1 = require("../utils");
 const firebaseAdmin = require('firebase-admin');
-const firebaseKey = require(path.resolve(process.cwd(), config_1.config.plugins.firebase.keyFilename || 'keys/firebase.json'));
+const firebaseKey = require(path.resolve(process.cwd(), config_1.config.config.firebase.keyFilename || 'keys/firebase.json'));
 const firebase = firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(firebaseKey),
-    databaseURL: config_1.config.plugins.firebase.databaseURL
+    databaseURL: config_1.config.config.firebase.databaseURL
 });
 const database = firebase.database();
 exports.plugin = utils_1.freeze({

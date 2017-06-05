@@ -26,7 +26,7 @@
     "npm-run": "4.1.2",
     "rimraf": "2.6.1",
     "ts-jest": "20.0.4",
-    "typescript": "2.3.3"
+    "typescript": "2.3.4"
   },
   "jest": {
     "collectCoverage": true,

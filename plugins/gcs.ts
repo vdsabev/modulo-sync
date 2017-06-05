@@ -8,9 +8,9 @@ import { freeze } from '../utils';
 const googleCloudStorage = require('@google-cloud/storage');
 const storage = googleCloudStorage({
   projectId: process.env.GCS_PROJECT_ID,
-  keyFilename: path.resolve(process.cwd(), config.plugins.gcs.keyFilename || 'keys/gcs.json')
+  keyFilename: path.resolve(process.cwd(), config.config.gcs.keyFilename || 'keys/gcs.json')
 });
-const bucket = storage.bucket(config.plugins.gcs.bucket);
+const bucket = storage.bucket(config.config.gcs.bucket);
 
 export const plugin: ModuloPlugin = freeze({
   on(eventNames: string[]) {

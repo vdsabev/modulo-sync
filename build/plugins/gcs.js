@@ -7,9 +7,9 @@ const utils_1 = require("../utils");
 const googleCloudStorage = require('@google-cloud/storage');
 const storage = googleCloudStorage({
     projectId: process.env.GCS_PROJECT_ID,
-    keyFilename: path.resolve(process.cwd(), config_1.config.plugins.gcs.keyFilename || 'keys/gcs.json')
+    keyFilename: path.resolve(process.cwd(), config_1.config.config.gcs.keyFilename || 'keys/gcs.json')
 });
-const bucket = storage.bucket(config_1.config.plugins.gcs.bucket);
+const bucket = storage.bucket(config_1.config.config.gcs.bucket);
 exports.plugin = utils_1.freeze({
     on(eventNames) {
         logger_1.logger.error(`WARNING: Events aren't supported for plugin: gcs`);

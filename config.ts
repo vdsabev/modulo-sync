@@ -3,42 +3,47 @@ import * as glob from 'glob';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
 
-import { pipe, match, last, setDefault } from './utils';
+import { isContained, pipe, replace, split, match, last, setDefault, map, replace } from './utils';
 
 export interface Config {
-  plugins: Record<string, Record<string, string>>;
+  config: Record<string, Record<string, string>>;
   events: ConfigEvent[];
 }
 
 export interface ConfigEvent extends Record<string, string> {
+  watch: string;
 }
 
-export interface EventSettings {
-  type: EventType;
-  plugin: string;
-  params: string[];
-}
+export const parseWatchContent = (imports: string[]) => {
+  const isImported = isContained(imports);
+  return (content: string) => {
+    const [plugin, path] = content.split(/\s+/);
+    if (!isImported(plugin)) throw new Error(`You must import a plugin before you can use it: ${plugin}`);
 
-export type EventType = 'event' | 'action';
-
-export const parseEventDefinition = (definition: string): EventSettings => {
-  const [type, plugin, ...params] = definition.split(/\s+/);
-  return {
-    type: getEventType(type),
-    plugin,
-    params: getEventParams(params.join(''))
+    return { plugin, path: path.replace(/(^['"]|['"]$)/g, '') };
   };
 };
 
-const getEventType = (type: string): EventType => {
-  switch (type) {
-    case 'on': return 'event';
-    case 'do': return 'action';
-    default: throw new Error(`Invalid event type: ${type}`);
-  }
+export const parseEventDefinition: (definition: string) => string[] = pipe(replace(/(^on\s*|[\[\]\(\)])/g, ''), split(/\s*,\s*/));
+
+export const parseEventContent = (imports: string[]) => {
+  const isImported = isContained(imports);
+
+  return (content: string) => {
+    // TODO: Support << for compose
+    return content.split(/\s*>>\s*/).map((pipe) => {
+      const [fnDefinition, ...args] = pipe.split(/\s+/);
+      const [plugin, method] = fnDefinition.split('.');
+      return {
+        plugin,
+        method,
+        args: args.map(removeCommas)
+      };
+    });
+  };
 };
 
-const getEventParams = (params: string): string[] => params.replace(/[\[\]\(\)]/g, '').split(',');
+const removeCommas = replace(/(^\s*,\s*|\s*,\s*$)/g, '');
 
 // TODO: Handle readFileSync exception
 // TODO: Handle null references
@@ -48,7 +53,7 @@ const configFile = fs.readFileSync(path.resolve(process.cwd(), configFilePath), 
 export const config: Config = yaml.safeLoad(configFile);
 
 // Set default values
-setDefault(config, {})('plugins');
+setDefault(config, {})('config');
 const plugins = glob.sync('plugins/!(*.d|*.test).ts');
-const setPluginDefault = pipe(match(/plugins\/(\w+)/), last, setDefault(config.plugins, {}));
+const setPluginDefault = pipe(match(/plugins\/(\w+)/), last, setDefault(config.config, {}));
 plugins.map(setPluginDefault);

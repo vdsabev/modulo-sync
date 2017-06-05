@@ -1,12 +1,12 @@
 # Example configuration
-plugins:
+import: [file, firebase, utils: $]
+
+config:
   firebase:
     keyFilename: posts/firebase.json
     databaseURL: https://modulo-one.firebaseio.com
 
 events:
-  - on file [add, change]: posts/:postId/content.md
-    do file [writeFile]: posts/:postId/content-copy.md
-
-  - on file [unlink]: posts/:postId/content.md
-    do file [unlink]: posts/:postId/content-copy.md
+  - watch: file 'posts/:postId/content.md'
+    on [add, change]: file.readFile >> firebase.set 'postContent/:postId'
+    on [unlink]: $.partial firebase.remove, 'postContent/:postId'

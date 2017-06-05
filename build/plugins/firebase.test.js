@@ -19,7 +19,7 @@ it(`TODO`);
 //   credential: { cert: () => 'a' }
 // }));
 // import * as path from 'path';
-// jest.mock(path.resolve(process.cwd(), config.plugins.firebase.keyFilename), () => '', { virtual: true });
+// jest.mock(path.resolve(process.cwd(), config.config.firebase.keyFilename), () => '', { virtual: true });
 // jest.mock('../logger', () => ({ logger: { log: jest.fn(), error: jest.fn() } }));
 // import { logger } from '../logger';
 // import { plugin } from './firebase';

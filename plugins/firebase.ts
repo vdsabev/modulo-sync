@@ -6,11 +6,11 @@ import { pattern, Pattern } from '../pattern';
 import { freeze } from '../utils';
 
 const firebaseAdmin = require('firebase-admin');
-const firebaseKey = require(path.resolve(process.cwd(), config.plugins.firebase.keyFilename || 'keys/firebase.json'));
+const firebaseKey = require(path.resolve(process.cwd(), config.config.firebase.keyFilename || 'keys/firebase.json'));
 
 const firebase = firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(firebaseKey),
-  databaseURL: config.plugins.firebase.databaseURL
+  databaseURL: config.config.firebase.databaseURL
 });
 
 const database = firebase.database();
