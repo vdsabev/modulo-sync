@@ -60,7 +60,7 @@ describe(`parseEventDefinition`, () => {
 });
 
 describe(`parseEventContent`, () => {
-  const parseEventContentWithImports = parseEventContent(['file', '$']);
+  const parseEventContentWithImports = parseEventContent(['file', 'firebase', '$']);
 
   it(`should extract function calls`, () => {
     expect(parseEventContentWithImports(`file.readFile >> firebase.set 'postContent/:postId'`)).toEqual([
@@ -79,8 +79,8 @@ describe(`parseEventContent`, () => {
     expect(parseEventContentWithImports(`$.partial firebase.remove, 'postContent/:postId'`)).toEqual([
       {
         plugin: '$', method: 'partial', args: [
-          { plugin: 'firebase', method: 'remove' },
-          'postContent/:postId'
+          { plugin: 'firebase', method: 'remove', args: [] },
+          `'postContent/:postId'`
         ]
       }
     ]);

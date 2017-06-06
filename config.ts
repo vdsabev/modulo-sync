@@ -3,7 +3,7 @@ import * as glob from 'glob';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
 
-import { isContained, pipe, replace, split, match, last, setDefault, map, replace } from './utils';
+import { isContained, pipe, replace, split, match, last, setDefault, map } from './utils';
 
 export interface Config {
   config: Record<string, Record<string, string>>;
@@ -29,18 +29,25 @@ export const parseEventDefinition: (definition: string) => string[] = pipe(repla
 export const parseEventContent = (imports: string[]) => {
   const isImported = isContained(imports);
 
-  return (content: string) => {
-    // TODO: Support << for compose
-    return content.split(/\s*>>\s*/).map((pipe) => {
-      const [fnDefinition, ...args] = pipe.split(/\s+/);
-      const [plugin, method] = fnDefinition.split('.');
-      return {
-        plugin,
-        method,
-        args: args.map(removeCommas)
-      };
-    });
-  };
+  return pipe(split(/\s*>>\s*/), map((expression: string) => {
+    const [fnDefinition, ...args] = expression.split(/\s+/);
+    const [plugin, method] = fnDefinition.split('.');
+    return {
+      plugin,
+      method,
+      args: args.map(removeCommas).map((arg: string) => {
+        const [argPlugin, argMethod] = arg.split('.');
+        if (isImported(argPlugin)) {
+          return {
+            plugin: argPlugin,
+            method: argMethod,
+            args: []
+          };
+        }
+        return arg;
+      })
+    };
+  }));
 };
 
 const removeCommas = replace(/(^\s*,\s*|\s*,\s*$)/g, '');

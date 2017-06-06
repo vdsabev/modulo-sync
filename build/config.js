@@ -17,18 +17,25 @@ exports.parseWatchContent = (imports) => {
 exports.parseEventDefinition = utils_1.pipe(utils_1.replace(/(^on\s*|[\[\]\(\)])/g, ''), utils_1.split(/\s*,\s*/));
 exports.parseEventContent = (imports) => {
     const isImported = utils_1.isContained(imports);
-    return (content) => {
-        // TODO: Support << for compose
-        return content.split(/\s*>>\s*/).map((pipe) => {
-            const [fnDefinition, ...args] = pipe.split(/\s+/);
-            const [plugin, method] = fnDefinition.split('.');
-            return {
-                plugin,
-                method,
-                args: args.map(removeCommas)
-            };
-        });
-    };
+    return utils_1.pipe(utils_1.split(/\s*>>\s*/), utils_1.map((expression) => {
+        const [fnDefinition, ...args] = expression.split(/\s+/);
+        const [plugin, method] = fnDefinition.split('.');
+        return {
+            plugin,
+            method,
+            args: args.map(removeCommas).map((arg) => {
+                const [argPlugin, argMethod] = arg.split('.');
+                if (isImported(argPlugin)) {
+                    return {
+                        plugin: argPlugin,
+                        method: argMethod,
+                        args: []
+                    };
+                }
+                return arg;
+            })
+        };
+    }));
 };
 const removeCommas = utils_1.replace(/(^\s*,\s*|\s*,\s*$)/g, '');
 // TODO: Handle readFileSync exception
