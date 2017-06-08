@@ -4,35 +4,24 @@ import * as path from 'path';
 
 import { logger } from '../logger';
 import { Pattern } from '../pattern';
-import { promisify, freeze, partial } from '../utils';
+import { freeze, partial, promisify } from '../utils';
 
-const readFile = promisify(fs.readFile);
-
-export const plugin: ModuloPlugin = freeze({
+export const plugin: any = freeze({
   on(eventNames: string[], sourcePattern: Pattern, fn: Function) {
     const watcher = watch(sourcePattern.replace('*'), { persistent: true });
     watcher.on('ready', () => {
       watcher.on('error', partial(logger.error, '[ERROR]'));
-      eventNames.map(startWatching(watcher, fn));
+      eventNames.map((eventName: string) => {
+        watcher.on(eventName, (filePath: string) => {
+          const sourcePath = normalizePath(filePath);
+          fn(sourcePath);
+        });
+      });
     });
   },
-  do(actionNames: string[], ...args: any[]) {
-    actionNames.map((actionName) => (<any>fs)[actionName](...args));
+  do(method: string, ...args: any[]) {
+    return promisify((<any>fs)[method])(...args);
   }
 });
-
-export const startWatching = (watcher: FSWatcher, fn: Function) => (eventName: string) => {
-  watcher.on(eventName, async (filePath: string) => {
-    const sourcePath = normalizePath(filePath);
-    const args: any[] = [];
-    switch (eventName) {
-      case 'add':
-      case 'change':
-        args.push(await readFile(filePath, 'utf8'));
-        break;
-    }
-    fn(sourcePath, ...args);
-  });
-};
 
 export const normalizePath = (filePath: string) => filePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/');

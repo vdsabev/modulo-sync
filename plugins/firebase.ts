@@ -15,7 +15,7 @@ const firebase = firebaseAdmin.initializeApp({
 
 const database = firebase.database();
 
-export const plugin: ModuloPlugin = freeze({
+export const plugin: any = freeze({
   on(eventNames: string[], sourcePattern: Pattern, fn: Function) {
     const ref = database.ref(sourcePattern.replace(''));
 
@@ -25,9 +25,9 @@ export const plugin: ModuloPlugin = freeze({
     ref.once('value').then(() => loaded = true);
     eventNames.map(startWatching(ref, fn, sourcePattern, () => loaded));
   },
-  do(actionNames: string[], destinationPath: string, ...args: any[]) {
+  do(methodName: string, destinationPath: string, ...args: any[]) {
     const ref = database.ref(destinationPath);
-    actionNames.map((actionName) => ref[actionName](...args));
+    return ref[methodName](...args);
   }
 });
 

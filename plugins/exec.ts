@@ -3,7 +3,7 @@ import { freeze } from '../utils';
 
 const npmRun = require('npm-run');
 
-export const plugin: ModuloPlugin = freeze({
+export const plugin: any = freeze({
   // TODO: Remove when plugin methods become optional
   on(eventNames: string[]) {
     logger.error(`WARNING: Events aren't supported for plugin: exec`);

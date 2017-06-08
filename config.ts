@@ -6,15 +6,19 @@ import * as yaml from 'js-yaml';
 import { isContained, pipe, replace, split, match, last, setDefault, map } from './utils';
 
 export interface Config {
+  import: ConfigImport[];
   config: Record<string, Record<string, string>>;
   events: ConfigEvent[];
 }
 
-export interface ConfigEvent extends Record<string, string> {
+export type ConfigImport = string | Record<string, string>;
+
+export interface ConfigEvent {
   watch: string;
+  [key: string]: string;
 }
 
-export const parseWatchContent = (imports: string[]) => {
+export const parseWatchContent = (imports: ConfigImport[]) => {
   const isImported = isContained(imports);
   return (content: string) => {
     const [plugin, path] = content.split(/\s+/);
@@ -26,7 +30,7 @@ export const parseWatchContent = (imports: string[]) => {
 
 export const parseEventDefinition: (definition: string) => string[] = pipe(replace(/(^on\s*|[\[\]\(\)])/g, ''), split(/\s*,\s*/));
 
-export const parseEventContent = (imports: string[]) => {
+export const parseEventContent = (imports: ConfigImport[]) => {
   const isImported = isContained(imports);
 
   return pipe(split(/\s*>>\s*/), map((expression: string) => {

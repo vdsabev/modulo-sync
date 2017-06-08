@@ -12,7 +12,7 @@ const storage = googleCloudStorage({
 });
 const bucket = storage.bucket(config.config.gcs.bucket);
 
-export const plugin: ModuloPlugin = freeze({
+export const plugin: any = freeze({
   on(eventNames: string[]) {
     logger.error(`WARNING: Events aren't supported for plugin: gcs`);
   },

@@ -1,4 +1,7 @@
+import { Pattern } from '../pattern';
+
 // TODO: Make methods optional
 interface ModuloPlugin {
-  watch(path: string): any;
+  on(eventNames: string[], sourcePattern: Pattern, fn: Function): void;
+  do(actionNames: string[], ...args: any[]): void;
 }

@@ -19,9 +19,9 @@ exports.plugin = utils_1.freeze({
         ref.once('value').then(() => loaded = true);
         eventNames.map(exports.startWatching(ref, fn, sourcePattern, () => loaded));
     },
-    do(actionNames, destinationPath, ...args) {
+    do(methodName, destinationPath, ...args) {
         const ref = database.ref(destinationPath);
-        actionNames.map((actionName) => ref[actionName](...args));
+        return ref[methodName](...args);
     }
 });
 exports.startWatching = (ref, fn, sourcePattern, loaded) => (eventName) => {
