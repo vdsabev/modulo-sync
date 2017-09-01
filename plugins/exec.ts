@@ -1,5 +1,5 @@
+import { freeze } from 'compote-fp';
 import { logger } from '../logger';
-import { freeze } from '../utils';
 
 const npmRun = require('npm-run');
 

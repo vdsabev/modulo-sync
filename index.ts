@@ -1,7 +1,8 @@
+import { pipe, compose, keys, values, first, ternary, is, identity, contains } from 'compote-fp';
+
 import { config, parseWatchContent, parseEventDefinition, parseEventContent } from './config';
 import { logger } from './logger';
 import { pattern, Pattern } from './pattern';
-import { pipe, compose, keys, values, first, ternary, is, identity, contains } from './utils';
 
 const parseWatchContentWithImports = parseWatchContent(config.import);
 const parseEventContentWithImports = parseEventContent(config.import);
@@ -34,7 +35,7 @@ config.events.map((configEvent) => {
     watchPlugin.on(events, pattern(watch.path), async (path: string) => {
       let arg: any = path;
       for (const fn of fns) {
-        console.log(`do ${fn.plugin}.${fn.method}(${[arg, ...fn.args].map(JSON.stringify).join(', ')})`);
+        console.log(`do ${fn.plugin}.${fn.method}(${[arg, ...fn.args].map((a) => JSON.stringify(a)).join(', ')})`);
         // TODO: Make sure the require is non-blocking on subsequent requests
         const fnModule = require(`./plugins/${getPluginName(fn.plugin)}`);
         if (fnModule.plugin && fnModule.plugin.do) {

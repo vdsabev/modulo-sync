@@ -1,9 +1,9 @@
+import { freeze } from 'compote-fp';
 import * as path from 'path';
 
 import { config } from '../config';
 import { logger } from '../logger';
 import { pattern, Pattern } from '../pattern';
-import { freeze } from '../utils';
 
 const firebaseAdmin = require('firebase-admin');
 const firebaseKey = require(path.resolve(process.cwd(), config.config.firebase.keyFilename || 'keys/firebase.json'));

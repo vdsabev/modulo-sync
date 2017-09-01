@@ -16,7 +16,7 @@ it(`TODO`);
 // jest.mock('../logger', () => ({ logger: { log: jest.fn(), error: jest.fn() } }));
 // import { logger } from '../logger';
 // import { pattern } from '../parser';
-// import { last } from '../utils';
+// import { last } from 'compote-fp';
 
 // import { plugin, watchFiles, writeToDestination, deleteFromDestination, normalizePath } from './file';
 

@@ -1,10 +1,10 @@
 import { watch, FSWatcher } from 'chokidar';
+import { freeze, partial, promisify } from 'compote-fp';
 import * as fs from 'fs';
 import * as path from 'path';
 
 import { logger } from '../logger';
 import { Pattern } from '../pattern';
-import { freeze, partial, promisify } from '../utils';
 
 export const plugin: any = freeze({
   on(eventNames: string[], sourcePattern: Pattern, fn: Function) {

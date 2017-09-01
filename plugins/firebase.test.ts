@@ -7,7 +7,7 @@ it(`TODO`);
 // jest.mock('chokidar', () => ({ watch }));
 
 // import { config } from '../config';
-// import { constant } from '../utils';
+// import { constant } from 'compote-fp';
 
 // const database = {
 //   ref: jest.fn(constant({

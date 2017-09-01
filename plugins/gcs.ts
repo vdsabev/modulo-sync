@@ -1,9 +1,9 @@
 import * as path from 'path';
-import { Readable } from 'stream';
+import { freeze } from 'compote-fp';
+// import { Readable } from 'stream';
 
 import { config } from '../config';
 import { logger } from '../logger';
-import { freeze } from '../utils';
 
 const googleCloudStorage = require('@google-cloud/storage');
 const storage = googleCloudStorage({

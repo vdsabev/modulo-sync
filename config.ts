@@ -1,9 +1,8 @@
+import { isContained, pipe, replace, split, match, last, setDefault, map } from 'compote-fp';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
-
-import { isContained, pipe, replace, split, match, last, setDefault, map } from './utils';
 
 export interface Config {
   import: ConfigImport[];

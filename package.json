@@ -13,20 +13,21 @@
     "jest": "jest --watch"
   },
   "dependencies": {
-    "@google-cloud/storage": "1.1.1",
-    "@types/chokidar": "1.6.0",
-    "@types/glob": "5.0.30",
-    "@types/jest": "19.2.3",
-    "@types/js-yaml": "3.5.30",
+    "@google-cloud/storage": "1.2.1",
+    "@types/chokidar": "1.7.2",
+    "@types/glob": "5.0.32",
+    "@types/jest": "20.0.8",
+    "@types/js-yaml": "3.9.1",
     "chokidar": "1.7.0",
-    "firebase-admin": "5.0.0",
+    "compote-fp": "0.1.2",
+    "firebase-admin": "5.2.1",
     "glob": "7.1.2",
     "jest": "20.0.4",
-    "js-yaml": "3.8.4",
+    "js-yaml": "3.9.1",
     "npm-run": "4.1.2",
     "rimraf": "2.6.1",
-    "ts-jest": "20.0.4",
-    "typescript": "2.3.4"
+    "ts-jest": "20.0.14",
+    "typescript": "2.5.2"
   },
   "jest": {
     "collectCoverage": true,

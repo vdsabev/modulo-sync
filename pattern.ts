@@ -1,4 +1,4 @@
-import { pipe, map, join, identity, isContained, ternary, cap } from './utils';
+import { pipe, map, join, identity, isContained, ternary, cap } from 'compote-fp';
 
 // Pattern
 export interface Pattern {

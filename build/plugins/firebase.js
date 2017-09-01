@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const compote_fp_1 = require("compote-fp");
 const path = require("path");
 const config_1 = require("../config");
-const utils_1 = require("../utils");
 const firebaseAdmin = require('firebase-admin');
 const firebaseKey = require(path.resolve(process.cwd(), config_1.config.config.firebase.keyFilename || 'keys/firebase.json'));
 const firebase = firebaseAdmin.initializeApp({
@@ -10,7 +10,7 @@ const firebase = firebaseAdmin.initializeApp({
     databaseURL: config_1.config.config.firebase.databaseURL
 });
 const database = firebase.database();
-exports.plugin = utils_1.freeze({
+exports.plugin = compote_fp_1.freeze({
     on(eventNames, sourcePattern, fn) {
         const ref = database.ref(sourcePattern.replace(''));
         // Avoid multiple `child_added` events

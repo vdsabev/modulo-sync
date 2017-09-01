@@ -8,19 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const compote_fp_1 = require("compote-fp");
 const config_1 = require("./config");
 const logger_1 = require("./logger");
 const pattern_1 = require("./pattern");
-const utils_1 = require("./utils");
 const parseWatchContentWithImports = config_1.parseWatchContent(config_1.config.import);
 const parseEventContentWithImports = config_1.parseEventContent(config_1.config.import);
 const getPluginName = (pluginName) => {
-    const containsPlugin = utils_1.contains(pluginName);
+    const containsPlugin = compote_fp_1.contains(pluginName);
     if (containsPlugin(config_1.config.import))
         return pluginName;
     // ternary(is('string'), identity, compose(first, values));
-    for (const importDefinition of config_1.config.import.filter(utils_1.is('object'))) {
-        if (containsPlugin(utils_1.keys(importDefinition)))
+    for (const importDefinition of config_1.config.import.filter(compote_fp_1.is('object'))) {
+        if (containsPlugin(compote_fp_1.keys(importDefinition)))
             return importDefinition[pluginName];
     }
     throw new Error(`Unknown import: ${pluginName}`);
@@ -32,7 +32,7 @@ config_1.config.events.map((configEvent) => {
         return logger_1.logger.error(`Invalid config event: watch missing in ${JSON.stringify(configEvent, null, 2)}`);
     const watch = parseWatchContentWithImports(configEvent.watch);
     const { plugin: watchPlugin } = require(`./plugins/${watch.plugin}`);
-    utils_1.keys(configEvent).map((definition) => {
+    compote_fp_1.keys(configEvent).map((definition) => {
         if (definition === 'watch')
             return;
         const events = config_1.parseEventDefinition(definition);
@@ -40,7 +40,7 @@ config_1.config.events.map((configEvent) => {
         watchPlugin.on(events, pattern_1.pattern(watch.path), (path) => __awaiter(this, void 0, void 0, function* () {
             let arg = path;
             for (const fn of fns) {
-                console.log(`do ${fn.plugin}.${fn.method}(${[arg, ...fn.args].map(JSON.stringify).join(', ')})`);
+                console.log(`do ${fn.plugin}.${fn.method}(${[arg, ...fn.args].map((a) => JSON.stringify(a)).join(', ')})`);
                 // TODO: Make sure the require is non-blocking on subsequent requests
                 const fnModule = require(`./plugins/${getPluginName(fn.plugin)}`);
                 if (fnModule.plugin && fnModule.plugin.do) {

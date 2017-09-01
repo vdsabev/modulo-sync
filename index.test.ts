@@ -1,18 +1,21 @@
 import 'jest';
 
-import { parseEventDefinition } from './config';
+import { parseWatchContent, parseEventDefinition, parseEventContent } from './config';
 jest.mock('./config', () => ({
+  parseWatchContent,
   parseEventDefinition,
+  parseEventContent,
   config: { events: [{ 'on file [a, b]': 'c', 'do exec [d]': 'e' }] }
 }));
 
 jest.mock('./plugins/file', () => ({ plugin: { on: jest.fn() } }));
 jest.mock('./plugins/exec', () => ({ plugin: { do: jest.fn() } }));
 
+import { last } from 'compote-fp';
+
 import { pattern } from './pattern';
 import { plugin as source } from './plugins/file';
 import { plugin as destination } from './plugins/exec';
-import { last } from './utils';
 
 import './index';
 
@@ -24,6 +27,8 @@ it(`should call source.on`, () => {
 });
 
 it(`should call destination.do`, () => {
+  expect(source.on).toHaveBeenCalled();
+
   const sourceCall = last(source.on.mock.calls);
   sourceCall[2]('a', 'b', 'c');
 
