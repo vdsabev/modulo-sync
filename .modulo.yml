@@ -12,5 +12,5 @@ events:
   #   on [unlink]: $.partial firebase.remove, 'postContent/:postId'
 
   - watch: file 'posts/:postId/content.md'
-    on [add, change]: file.readFile >> $.invoke 'toString' >> $.partial file.writeFile, 'posts/asd/content2.md'
+    on [add, change]: file.readFile >> $.invoke 'toString' >> $.partial file.writeFile, 'posts/:postId/content2.md'
     on [unlink]: $.partial file.unlink, 'posts/:postId/content2.md'

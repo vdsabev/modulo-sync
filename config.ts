@@ -17,6 +17,12 @@ export interface ConfigEvent {
   [key: string]: string;
 }
 
+interface ParsedFunction {
+  plugin: string;
+  method: string;
+  args: any[];
+}
+
 export const parseWatchContent = (imports: ConfigImport[]) => {
   const isImported = isContained(imports);
   return (content: string) => {
@@ -32,16 +38,16 @@ export const parseEventDefinition: (definition: string) => string[] = pipe(repla
 export const parseEventContent = (imports: ConfigImport[]) => {
   const isImported = isContained(imports);
 
-  return pipe(split(/\s*>>\s*/), map((expression: string) => {
+  return <(expressions: string) => ParsedFunction[]>pipe(split(/\s*>>\s*/), map((expression: string) => {
     const [fnDefinition, ...args] = expression.split(/\s+/);
     const [plugin, method] = fnDefinition.split('.');
-    return {
+    return <ParsedFunction>{
       plugin,
       method,
       args: args.map(removeCommas).map((arg: string) => {
         const [argPlugin, argMethod] = arg.split('.');
         if (isImported(argPlugin)) {
-          return {
+          return <ParsedFunction>{
             plugin: argPlugin,
             method: argMethod,
             args: []

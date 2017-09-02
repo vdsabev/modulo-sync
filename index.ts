@@ -35,16 +35,19 @@ config.events.map((configEvent) => {
     watchPlugin.on(events, pattern(watch.path), async (path: string) => {
       let arg: any = path;
       for (const fn of fns) {
-        console.log(`do ${fn.plugin}.${fn.method}(${[arg, ...fn.args].map((a) => JSON.stringify(a)).join(', ')})`);
-        // TODO: Make sure the require is non-blocking on subsequent requests
+        console.log(`do ${fn.plugin}.${fn.method}(${[arg, ...fn.args].map(stringify).join(', ')})`);
+        // TODO: Make sure the require is non-blocking on subsequent requests; use cache if it is
         const fnModule = require(`./plugins/${getPluginName(fn.plugin)}`);
         if (fnModule.plugin && fnModule.plugin.do) {
           arg = await fnModule.plugin.do(fn.method, arg, ...fn.args).catch(logger.error);
         }
         else {
-          arg = fnModule[fn.method](arg, ...fn.args);
+          arg = fnModule[fn.method](...fn.args)(arg);
         }
       }
     });
   });
 });
+
+// `JSON.stringify` returns `undefined` for anonymous functions, but `toString` works fine
+const stringify = (s: string) => JSON.stringify(s) || s && s.toString();
