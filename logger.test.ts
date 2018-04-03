@@ -1,5 +1,3 @@
-import 'jest';
-
 import { logger as defaultLogger, Logger } from './logger';
 
 const testLogger = (logger: Logger) => {

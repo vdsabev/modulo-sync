@@ -1,4 +1,3 @@
-import { freeze } from 'compote-fp';
 import * as path from 'path';
 
 import { config } from '../config';
@@ -6,17 +5,17 @@ import { logger } from '../logger';
 import { pattern, Pattern } from '../pattern';
 
 const firebaseAdmin = require('firebase-admin');
-const firebaseKey = require(path.resolve(process.cwd(), config.config.firebase.keyFilename || 'keys/firebase.json'));
+const firebaseKey = require(path.resolve(process.cwd(), config.options.firebase.keyFilename || 'keys/firebase.json'));
 
 const firebase = firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(firebaseKey),
-  databaseURL: config.config.firebase.databaseURL
+  databaseURL: config.options.firebase.databaseURL
 });
 
 const database = firebase.database();
 
-export const plugin: any = freeze({
-  on(eventNames: string[], sourcePattern: Pattern, fn: Function) {
+export default (sourcePattern: Pattern) => ({
+  on(eventNames: string[], fn: Function) {
     const ref = database.ref(sourcePattern.replace(''));
 
     // Avoid multiple `child_added` events
@@ -31,7 +30,7 @@ export const plugin: any = freeze({
   }
 });
 
-export const startWatching = (ref: any, fn: Function, sourcePattern: Pattern, loaded: () => boolean) => (eventName: string) => {
+const startWatching = (ref: any, fn: Function, sourcePattern: Pattern, loaded: () => boolean) => (eventName: string) => {
   ref.on(eventName, (snapshot: any) => {
     if (loaded()) {
       fn(sourcePattern.replace(snapshot.key), snapshot.val());

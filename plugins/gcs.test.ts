@@ -1,5 +1,3 @@
-import 'jest';
-
 it(`TODO`);
 
 // import * as path from 'path';

@@ -1,17 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
-const compote_fp_1 = require("compote-fp");
 // import { Readable } from 'stream';
 const config_1 = require("../config");
 const logger_1 = require("../logger");
 const googleCloudStorage = require('@google-cloud/storage');
 const storage = googleCloudStorage({
-    projectId: process.env.GCS_PROJECT_ID,
-    keyFilename: path.resolve(process.cwd(), config_1.config.config.gcs.keyFilename || 'keys/gcs.json')
+    projectId: config_1.config.options.gcs.projectId,
+    keyFilename: path.resolve(process.cwd(), config_1.config.options.gcs.keyFilename || 'keys/gcs.json')
 });
-const bucket = storage.bucket(config_1.config.config.gcs.bucket);
-exports.plugin = compote_fp_1.freeze({
+const bucket = storage.bucket(config_1.config.options.gcs.bucket);
+exports.default = () => ({
     on(eventNames) {
         logger_1.logger.error(`WARNING: Events aren't supported for plugin: gcs`);
     },

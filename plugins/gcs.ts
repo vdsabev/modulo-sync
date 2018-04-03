@@ -1,5 +1,4 @@
 import * as path from 'path';
-import { freeze } from 'compote-fp';
 // import { Readable } from 'stream';
 
 import { config } from '../config';
@@ -7,19 +6,18 @@ import { logger } from '../logger';
 
 const googleCloudStorage = require('@google-cloud/storage');
 const storage = googleCloudStorage({
-  projectId: process.env.GCS_PROJECT_ID,
-  keyFilename: path.resolve(process.cwd(), config.config.gcs.keyFilename || 'keys/gcs.json')
+  projectId: config.options.gcs.projectId,
+  keyFilename: path.resolve(process.cwd(), config.options.gcs.keyFilename || 'keys/gcs.json')
 });
-const bucket = storage.bucket(config.config.gcs.bucket);
+const bucket = storage.bucket(config.options.gcs.bucket);
 
-export const plugin: any = freeze({
-  on(eventNames: string[]) {
-    logger.error(`WARNING: Events aren't supported for plugin: gcs`);
-  },
-  do(actionNames: string[], ...args: any[]) {
-    logger.error(`WARNING: Actions aren't supported for plugin: gcs`);
-  }
-});
+export const watch = (eventNames: string[]) => {
+  logger.error(`WARNING: Events aren't supported for plugin: gcs`);
+};
+
+export const run = (actionNames: string[], ...args: any[]) => {
+  logger.error(`WARNING: Actions aren't supported for plugin: gcs`);
+};
 
 // export const plugin: any = freeze({
 //   type: <ModuloPluginType>'gcs',

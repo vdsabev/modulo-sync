@@ -1,6 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-require("jest");
 it(`TODO`);
 // import * as originalFs from 'fs';
 // const fs = {

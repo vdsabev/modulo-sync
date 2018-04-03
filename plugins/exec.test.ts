@@ -1,3 +1,1 @@
-import 'jest';
-
 it(`TODO`);

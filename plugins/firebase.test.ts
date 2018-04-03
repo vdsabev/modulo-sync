@@ -1,5 +1,3 @@
-import 'jest';
-
 it(`TODO`);
 
 // const watcher: any = { on: jest.fn(() => watcher) };

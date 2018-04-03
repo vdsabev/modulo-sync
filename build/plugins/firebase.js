@@ -1,30 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const compote_fp_1 = require("compote-fp");
 const path = require("path");
 const config_1 = require("../config");
 const firebaseAdmin = require('firebase-admin');
-const firebaseKey = require(path.resolve(process.cwd(), config_1.config.config.firebase.keyFilename || 'keys/firebase.json'));
+const firebaseKey = require(path.resolve(process.cwd(), config_1.config.options.firebase.keyFilename || 'keys/firebase.json'));
 const firebase = firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(firebaseKey),
-    databaseURL: config_1.config.config.firebase.databaseURL
+    databaseURL: config_1.config.options.firebase.databaseURL
 });
 const database = firebase.database();
-exports.plugin = compote_fp_1.freeze({
+exports.default = () => ({
     on(eventNames, sourcePattern, fn) {
         const ref = database.ref(sourcePattern.replace(''));
         // Avoid multiple `child_added` events
         // https://stackoverflow.com/questions/27978078/how-to-separate-initial-data-load-from-incremental-children-with-firebase
         let loaded;
         ref.once('value').then(() => loaded = true);
-        eventNames.map(exports.startWatching(ref, fn, sourcePattern, () => loaded));
+        eventNames.map(startWatching(ref, fn, sourcePattern, () => loaded));
     },
     do(methodName, destinationPath, ...args) {
         const ref = database.ref(destinationPath);
         return ref[methodName](...args);
     }
 });
-exports.startWatching = (ref, fn, sourcePattern, loaded) => (eventName) => {
+const startWatching = (ref, fn, sourcePattern, loaded) => (eventName) => {
     ref.on(eventName, (snapshot) => {
         if (loaded()) {
             fn(sourcePattern.replace(snapshot.key), snapshot.val());
