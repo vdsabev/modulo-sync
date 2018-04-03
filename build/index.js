@@ -1,30 +1,53 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = require("./config");
-const utils_1 = require("./utils");
-// TODO: Refactor
-const syncPlugin = (event) => {
-    utils_1.keys(event.for).map((sourceType) => {
-        // TODO: Handle require exceptions
-        const { plugin: source } = require(`./plugins/${sourceType}`);
-        // TODO: Handle case where there's no watch function for the plugin
-        if (!source.watch)
-            return;
-        const sourcePaths = utils_1.arrayize(event.for[sourceType]);
-        sourcePaths.map((sourcePath) => {
-            utils_1.keys(event.do).map((destinationType) => {
-                // TODO: Handle require exceptions
-                const { plugin: destination } = require(`./plugins/${destinationType}`);
-                const destinationPaths = utils_1.arrayize(event.do[destinationType]);
-                destinationPaths.map((destinationPath) => {
-                    // TODO: Handle case where there's no watch function for the plugin
-                    if (!source.watch)
-                        return;
-                    source.watch({ sourcePath, destinationPath, destination });
-                });
-            });
-        });
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// TODO: If no plugins found in config, log a warning message before exiting
-config_1.config.events.map(syncPlugin);
+Object.defineProperty(exports, "__esModule", { value: true });
+const compote_fp_1 = require("compote-fp");
+const config_1 = require("./config");
+const logger_1 = require("./logger");
+const pattern_1 = require("./pattern");
+// const parseWatchContentWithImports = parseWatchContent(config.import);
+// const parseEventContentWithImports = parseEventContent(config.import);
+// const getPluginName = (pluginName: string): string => {
+//   const containsPlugin = contains(pluginName);
+//   if (containsPlugin(config.import)) return pluginName;
+//   // ternary(is('string'), identity, compose(first, values));
+//   for (const importDefinition of config.import.filter(is('object'))) {
+//     if (containsPlugin(keys(importDefinition))) return (<any>importDefinition)[pluginName];
+//   }
+//   throw new Error(`Unknown import: ${pluginName}`);
+// };
+// TODO: If no events found in config, log a warning message before exiting
+// TODO: Support path arrays
+config_1.config.events.map((configEvent) => {
+    if (!configEvent.watch)
+        return logger_1.logger.error(`Invalid config event: watch missing in ${JSON.stringify(configEvent, null, 2)}`);
+    compote_fp_1.keys(configEvent).map((definition) => {
+        if (definition === 'watch')
+            return;
+        const events = config_1.parseEventDefinition(definition);
+        const fns = configEvent[definition];
+        configEvent.watch.on(events, pattern_1.pattern(watch.path), (path) => __awaiter(this, void 0, void 0, function* () {
+            let arg = path;
+            for (const fn of fns) {
+                console.log(`do ${fn.plugin}.${fn.method}(${[arg, ...fn.args].map(stringify).join(', ')})`);
+                // TODO: Make sure the require is non-blocking on subsequent requests; use cache if it is
+                const fnModule = require(`./plugins/${getPluginName(fn.plugin)}`);
+                if (fnModule.plugin && fnModule.plugin.do) {
+                    arg = yield fnModule.plugin.do(fn.method, arg, ...fn.args).catch(logger_1.logger.error);
+                }
+                else {
+                    arg = fnModule[fn.method](...fn.args)(arg);
+                }
+            }
+        }));
+    });
+});
+// `JSON.stringify` returns `undefined` for anonymous functions, but `toString` works fine
+const stringify = (s) => JSON.stringify(s) || s && s.toString();

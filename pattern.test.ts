@@ -1,20 +1,4 @@
-import 'jest';
-
-import { parse, pattern } from './parser';
-
-describe(`parse`, () => {
-  it(`should parse file plugin options from string`, () => {
-    expect(parse('file://posts/:postId/content.md')).toEqual({ type: 'file', path: 'posts/:postId/content.md' });
-  });
-
-  it(`should parse firebase plugin options from string`, () => {
-    expect(parse('firebase://postContent/:postId')).toEqual({ type: 'firebase', path: 'postContent/:postId' });
-  });
-
-  it(`should parse gcs plugin options from string`, () => {
-    expect(parse('gcs://posts/:postId')).toEqual({ type: 'gcs', path: 'posts/:postId' });
-  });
-});
+import { pattern } from './pattern';
 
 describe(`pattern`, () => {
   describe(`replace`, () => {

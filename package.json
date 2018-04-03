@@ -1,46 +1,49 @@
 {
   "private": true,
   "name": "modulo-sync",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "MIT",
   "bin": {
     "modulo-sync": "./build/index.js"
   },
   "scripts": {
     "build": "rimraf ./build && tsc",
-    "start": "node ./build/index.js",
+    "start": "tsc && node ./build/index.js",
     "test": "jest",
-    "jest": "jest --watch"
+    "test.watch": "jest --watch"
   },
   "dependencies": {
-    "@google-cloud/storage": "1.1.1",
-    "@types/chokidar": "1.6.0",
-    "@types/glob": "5.0.30",
-    "@types/jest": "19.2.3",
-    "@types/js-yaml": "3.5.30",
+    "@google-cloud/storage": "1.2.1",
+    "@types/chokidar": "1.7.2",
+    "@types/glob": "5.0.32",
     "chokidar": "1.7.0",
-    "firebase-admin": "5.0.0",
-    "glob": "7.1.1",
-    "jest": "20.0.3",
-    "js-yaml": "3.8.4",
-    "rimraf": "2.6.1",
-    "ts-jest": "20.0.4",
-    "typescript": "2.3.2"
+    "compote-fp": "0.1.2",
+    "firebase-admin": "5.2.1",
+    "glob": "7.1.2",
+    "npm-run": "4.1.2",
+    "rimraf": "2.6.1"
+  },
+  "devDependencies": {
+    "@types/jest": "22.2.2",
+    "jest": "22.4.3",
+    "ts-jest": "22.4.2",
+    "typescript": "2.8.1"
   },
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "**/*.{ts,tsx,js}",
-      "!**/*.test.{ts,tsx,js}",
+      "**/*.{ts,tsx,js,jsx}",
+      "!**/*.test.{ts,tsx,js,jsx}",
       "!**/*.d.ts",
       "!(build|coverage|node_modules|posts|private)/**"
     ],
     "moduleFileExtensions": [
       "ts",
       "tsx",
-      "js"
+      "js",
+      "jsx"
     ],
-    "testRegex": "(/__tests__/.*|\\.test)\\.(ts|tsx)$",
+    "testRegex": "\\.test\\.(ts|tsx|js|jsx)$",
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     }

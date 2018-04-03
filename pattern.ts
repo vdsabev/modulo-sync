@@ -1,10 +1,6 @@
-import { pipe, map, join, identity, isContained, ternary, cap } from './utils';
+import { pipe, map, join, identity, isContained, ternary, cap } from 'compote-fp';
 
-export const parse = (fullPath: string): { type: ModuloPluginType, path: string } => {
-  const [type, path] = fullPath.split('://');
-  return { type: <ModuloPluginType>type, path };
-};
-
+// Pattern
 export interface Pattern {
   replace(data: string | Record<string, string>): string;
   extract(replacedPath: string): Record<string, string>;
@@ -13,13 +9,13 @@ export interface Pattern {
 export const pattern = (path: string, separator = '/'): Pattern => {
   const pathFragments = path.split(separator);
   const pathMatches = path.match(/:\w+/g) || [];
-  const isInMatches = isContained(pathMatches);
+  const isAMatch = isContained(pathMatches);
 
   return {
     replace(data: string | Record<string, string>) {
       if (typeof data === 'string') return path.replace(/:\w+/g, data);
 
-      const getFragment = ternary(cap(isInMatches), getDataByFragment(data), identity);
+      const getFragment = ternary(cap(isAMatch), getDataByFragment(data), identity);
       const replace = pipe(map(getFragment), join(separator));
       return replace(pathFragments);
     },
@@ -28,7 +24,7 @@ export const pattern = (path: string, separator = '/'): Pattern => {
       const data: Record<string, string> = {};
       replacedPath.split(separator).map((replacedFragment, index) => {
         const originalFragment = pathFragments[index];
-        if (isInMatches(originalFragment)) {
+        if (isAMatch(originalFragment)) {
           data[normalizeFragment(originalFragment)] = replacedFragment;
         }
       });

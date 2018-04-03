@@ -1,18 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require("fs");
+const compote_fp_1 = require("compote-fp");
 const glob = require("glob");
-const path = require("path");
-const yaml = require("js-yaml");
-const utils_1 = require("./utils");
+exports.parseEventDefinition = compote_fp_1.pipe(compote_fp_1.replace(/(^on\s*|[\[\]\(\)])/g, ''), compote_fp_1.split(/\s*,\s*/));
 // TODO: Handle readFileSync exception
 // TODO: Handle null references
 // TODO: Validate config
-const configFilePath = '.modulo.yml';
-const configFile = fs.readFileSync(path.resolve(process.cwd(), configFilePath), 'utf8');
-exports.config = yaml.safeLoad(configFile);
+const configFactoryPath = './modulo.config';
+const configFactory = require(configFactoryPath);
+exports.config = configFactory();
 // Set default values
-utils_1.setDefault(exports.config, {})('plugins');
+compote_fp_1.setDefault(exports.config, {})('options');
 const plugins = glob.sync('plugins/!(*.d|*.test).ts');
-const setPluginDefault = utils_1.pipe(utils_1.match(/plugins\/(\w+)/), utils_1.last, utils_1.setDefault(exports.config.plugins, {}));
+const setPluginDefault = compote_fp_1.pipe(compote_fp_1.match(/plugins\/(\w+)/), compote_fp_1.last, compote_fp_1.setDefault(exports.config.options, {}));
 plugins.map(setPluginDefault);

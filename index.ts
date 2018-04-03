@@ -1,31 +1,29 @@
-import { config, ConfigEvent } from './config';
-import { parse } from './parser';
-import { arrayize, keys } from './utils';
+import { arrayize, keys } from 'compote-fp';
 
-// TODO: Refactor
-const syncPlugin = (event: ConfigEvent) => {
-  keys(event.for).map((sourceType: ModuloPluginType) => {
-    // TODO: Handle require exceptions
-    const { plugin: source }: { plugin: ModuloPlugin } = require(`./plugins/${sourceType}`);
+import { config, parseEventDefinition } from './config';
+import { logger } from './logger';
+import { pattern, Pattern } from './pattern';
 
-    // TODO: Handle case where there's no watch function for the plugin
-    if (!source.watch) return;
+// TODO: If no events found in config, log a warning message before exiting
+// TODO: Support path arrays
+config.events.map((configEvent) => {
+  if (!configEvent.watch) return logger.error(`Invalid config event: watch missing in ${JSON.stringify(configEvent, null, 2)}`);
 
-    const sourcePaths: string[] = arrayize(event.for[sourceType]);
-    sourcePaths.map((sourcePath) => {
-      keys(event.do).map((destinationType: ModuloPluginType) => {
-        // TODO: Handle require exceptions
-        const { plugin: destination }: { plugin: ModuloPlugin } = require(`./plugins/${destinationType}`);
-        const destinationPaths: string[] = arrayize(event.do[destinationType]);
-        destinationPaths.map((destinationPath) => {
-          // TODO: Handle case where there's no watch function for the plugin
-          if (!source.watch) return;
-          source.watch({ sourcePath, destinationPath, destination });
-        });
-      });
+  keys(configEvent).map((definition) => {
+    if (definition === 'watch') return;
+
+    const events = parseEventDefinition(definition);
+    const fns = arrayize(configEvent[definition]);
+
+    configEvent.watch(events, async (path: string) => {
+      let arg: any = path;
+      for (const fn of fns) {
+        // TODO: Make sure the require is non-blocking on subsequent requests; use cache if it is
+        arg = await fn(arg).catch(logger.error);
+      }
     });
   });
-};
+});
 
-// TODO: If no plugins found in config, log a warning message before exiting
-config.events.map(syncPlugin);
+// `JSON.stringify` returns `undefined` for anonymous functions, but `toString` works fine
+const stringify = (s: string) => JSON.stringify(s) || s && s.toString();

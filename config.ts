@@ -1,31 +1,27 @@
-import * as fs from 'fs';
+import { pipe, replace, split, match, last, setDefault } from 'compote-fp';
 import * as glob from 'glob';
-import * as path from 'path';
-import * as yaml from 'js-yaml';
-
-import { pipe, match, last, setDefault } from './utils';
 
 export interface Config {
-  plugins: Record<ModuloPluginType, Record<string, string>>;
+  options: Record<string, any>;
   events: ConfigEvent[];
 }
 
-export interface ConfigEvent {
-  for: ConfigPluginRecord;
-  do: ConfigPluginRecord;
+interface ConfigEvent {
+  watch: Function;
+  [key: string]: any | any[];
 }
 
-export type ConfigPluginRecord = Record<ModuloPluginType, string | string[]>;
+export const parseEventDefinition: (definition: string) => string[] = pipe(replace(/(^on\s*|[\[\]\(\)])/g, ''), split(/\s*,\s*/));
 
 // TODO: Handle readFileSync exception
 // TODO: Handle null references
 // TODO: Validate config
-const configFilePath = '.modulo.yml';
-const configFile = fs.readFileSync(path.resolve(process.cwd(), configFilePath), 'utf8');
-export const config: Config = yaml.safeLoad(configFile);
+const configFactoryPath = './modulo.config';
+const configFactory = require(configFactoryPath);
+export const config: Config = configFactory();
 
 // Set default values
-setDefault(config, {})('plugins');
+setDefault(config, {})('options');
 const plugins = glob.sync('plugins/!(*.d|*.test).ts');
-const setPluginDefault = pipe(match(/plugins\/(\w+)/), last, setDefault(config.plugins, {}));
+const setPluginDefault = pipe(match(/plugins\/(\w+)/), last, setDefault(config.options, {}));
 plugins.map(setPluginDefault);
